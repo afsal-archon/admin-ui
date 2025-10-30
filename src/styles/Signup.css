@@ -1,0 +1,187 @@
+/* ===========================================================
+   🚀 Full-View Extraordinary Signup Page
+   Balanced left-right layout + responsive scaling
+=========================================================== */
+
+.signup-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center perfectly on large screens */
+  overflow: hidden;
+  padding: 0 5vw;
+  background: radial-gradient(circle at 20% 30%, #3a1c71, #d76d77, #ffaf7b);
+  background-size: 200% 200%;
+  animation: gradientShift 10s ease-in-out infinite;
+  font-family: "Poppins", sans-serif;
+}
+
+/* 🌈 Background animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Floating light orbs for depth */
+.signup-page::before,
+.signup-page::after {
+  content: "";
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(180px);
+  opacity: 0.25;
+  animation: float 6s ease-in-out infinite alternate;
+  z-index: 0;
+}
+.signup-page::before {
+  background: #48dbfb;
+  top: -100px;
+  left: -100px;
+}
+.signup-page::after {
+  background: #ff6b6b;
+  bottom: -120px;
+  right: -100px;
+}
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(30px);
+  }
+}
+
+/* ✨ Signup card */
+.signup-card {
+  position: relative;
+  z-index: 2;
+  width: clamp(380px, 35%, 520px); /* Responsive width */
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 25px;
+  backdrop-filter: blur(20px);
+  padding: clamp(2rem, 3vw, 3rem);
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(255, 255, 255, 0.15);
+  transition: all 0.4s ease;
+  animation: fadeInUp 1s ease forwards;
+}
+.signup-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 60px rgba(255, 255, 255, 0.25),
+    0 0 120px rgba(255, 107, 107, 0.2);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 💎 Title and subtitle */
+.signup-title {
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #48dbfb, #ff9ff3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.signup-subtitle {
+  font-size: clamp(0.9rem, 1vw, 1.1rem);
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 2rem;
+}
+
+/* Inputs */
+.signup-input {
+  width: 100%;
+  padding: clamp(0.9rem, 1vw, 1rem);
+  margin-bottom: 1.2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: clamp(0.9rem, 1vw, 1.05rem);
+  outline: none;
+  transition: all 0.3s ease;
+}
+.signup-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.signup-input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #48dbfb;
+  box-shadow: 0 0 15px #48dbfb90;
+}
+
+/* Button */
+.signup-btn {
+  width: 100%;
+  padding: clamp(0.8rem, 1vw, 1rem);
+  font-size: clamp(0.9rem, 1vw, 1.1rem);
+  font-weight: 600;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb);
+  background-size: 200% 200%;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+  transition: all 0.4s ease;
+}
+.signup-btn:hover {
+  background-position: right center;
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
+  transform: translateY(-3px);
+}
+
+/* Footer */
+.signup-footer {
+  margin-top: 1.5rem;
+  font-size: clamp(0.85rem, 1vw, 1rem);
+  color: rgba(255, 255, 255, 0.8);
+}
+.signup-footer a {
+  color: #48dbfb;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.signup-footer a:hover {
+  color: #ff9ff3;
+  text-decoration: underline;
+}
+
+/* 📱 Responsiveness */
+@media (max-width: 768px) {
+  .signup-page {
+    justify-content: center;
+    padding: 2rem;
+  }
+  .signup-card {
+    width: 95%;
+    padding: 2rem 1.5rem;
+  }
+  .signup-title {
+    font-size: 1.8rem;
+  }
+}

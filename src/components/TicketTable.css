@@ -1,0 +1,76 @@
+/* ===========================================================
+   🧾 Latest Tickets Section (Figma Exact)
+=========================================================== */
+
+.latest-tickets {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ticket-table thead {
+  background: #fff7ed; /* soft orange tint */
+}
+.ticket-table th {
+  text-align: left;
+  padding: 0.9rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6b7280;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.ticket-table td {
+  padding: 0.9rem 1rem;
+  font-size: 0.9rem;
+  color: #1f2937;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.ticket-table tr:hover {
+  background: #f9fafb;
+}
+
+/* ---------- Status Badges ---------- */
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* Blue = New */
+.status-new {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+/* Green = Open */
+.status-open {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* Yellow = In Progress */
+.status-progress {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ticket-table th,
+  .ticket-table td {
+    padding: 0.7rem;
+    font-size: 0.85rem;
+  }
+}

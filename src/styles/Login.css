@@ -1,0 +1,166 @@
+/* ===========================================================
+   🚀 Extraordinary Auth Page Design
+   Glassmorphic + Animated Gradient + Neon Glow + Responsive
+=========================================================== */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1f1c2c, #928dab);
+  font-family: "Poppins", sans-serif;
+}
+
+/* 🌈 Animated gradient background overlay */
+.auth-page::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: conic-gradient(
+    from 90deg,
+    #ff6b6b,
+    #feca57,
+    #48dbfb,
+    #5f27cd,
+    #ff6b6b
+  );
+  animation: rotate 12s linear infinite;
+  filter: blur(200px);
+  opacity: 0.25;
+  z-index: 0;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 💎 Glass Card */
+.auth-card {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+  border-radius: 25px;
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+  padding: 3rem 2.5rem;
+  width: 90%;
+  max-width: 420px;
+  color: #fff;
+  text-align: center;
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 🧠 Title & Subtitle */
+.auth-title {
+  font-size: 2.3rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #48dbfb, #ff9ff3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.auth-subtitle {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+}
+
+/* ✨ Input Fields */
+.auth-input {
+  width: 90%;
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+.auth-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.auth-input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #48dbfb;
+  box-shadow: 0 0 10px #48dbfb66;
+}
+
+/* 🧡 Buttons */
+.auth-btn {
+  width: 80%;
+  background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb);
+  background-size: 200% 200%;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+}
+.auth-btn:hover {
+  background-position: right center;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* 🌟 Link Footer */
+.auth-footer {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+.auth-footer a {
+  color: #48dbfb;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.auth-footer a:hover {
+  color: #ff9ff3;
+  text-decoration: underline;
+}
+
+/* 🎆 Neon Border Hover Effect */
+.auth-card:hover {
+  box-shadow: 0 0 40px rgba(72, 219, 251, 0.5), 0 0 80px rgba(255, 111, 97, 0.3);
+  transition: all 0.5s ease;
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 500px) {
+  .auth-card {
+    padding: 2rem 1.5rem;
+  }
+  .auth-title {
+    font-size: 1.8rem;
+  }
+}

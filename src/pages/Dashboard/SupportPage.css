@@ -1,0 +1,238 @@
+/* ===========================================================
+   💬 SUPPORT PAGE (Figma Accurate Multi-Panel Chat)
+=========================================================== */
+
+.support-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr 320px;
+  height: 100vh;
+  background: #f9fafb;
+  font-family: "Poppins", sans-serif;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+/* ---------- LEFT SIDEBAR ---------- */
+.support-sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.brand {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #f97316;
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+  outline: none;
+}
+
+.menu-section {
+  margin-bottom: 1.2rem;
+}
+.menu-section h4 {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 0.4rem;
+}
+.menu-section ul {
+  list-style: none;
+  padding: 0;
+}
+.menu-section li {
+  padding: 0.4rem 0;
+  color: #111827;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.menu-section li:hover {
+  color: #f97316;
+}
+.menu-section li.active {
+  color: #f97316;
+  font-weight: 600;
+}
+
+.agent-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+  position: relative;
+}
+.agent-item img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+.agent-item .online-dot {
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  position: absolute;
+  right: 5px;
+  bottom: 2px;
+}
+
+/* ---------- CENTER CHAT ---------- */
+.chat-main {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e5e7eb;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.5rem;
+  background: #fff;
+}
+
+.chat-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+.chat-header p {
+  font-size: 0.8rem;
+  color: #22c55e;
+  margin: 0;
+}
+
+.header-buttons button {
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  margin-left: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.pause {
+  background: #fef3c7;
+  color: #92400e;
+}
+.close {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.chat-body {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  overflow-y: auto;
+  background: #f9fafb;
+}
+
+.message {
+  max-width: 70%;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+.agent {
+  background: #f3f4f6;
+  align-self: flex-start;
+  color: #111827;
+}
+.user {
+  background: #f97316;
+  color: #fff;
+  align-self: flex-end;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #e5e7eb;
+  padding: 1rem;
+  background: #f9fafb;
+}
+.chat-input input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  font-size: 0.9rem;
+}
+.chat-input .send-btn {
+  margin-left: 1rem;
+  background: #f97316;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ---------- RIGHT INFO PANEL ---------- */
+.info-panel {
+  background: #ffffff;
+  padding: 1.2rem;
+  overflow-y: auto;
+}
+.info-panel h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+.info-panel .channel {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+.info-block {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+.notes-section textarea {
+  width: 100%;
+  height: 80px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 0.7rem;
+  resize: none;
+  outline: none;
+  margin-bottom: 1rem;
+}
+.activity-section h5 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+.activity-section p {
+  font-size: 0.85rem;
+  color: #374151;
+  margin-bottom: 0.4rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+  .support-layout {
+    grid-template-columns: 240px 1fr;
+  }
+  .info-panel {
+    display: none;
+  }
+}

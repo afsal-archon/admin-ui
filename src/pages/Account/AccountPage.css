@@ -1,0 +1,62 @@
+.account-layout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #eef1f4, #f9fafc);
+  font-family: "Poppins", sans-serif;
+}
+
+.account-container {
+  width: 420px;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 18px;
+  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(25px);
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.account-title {
+  color: #f97316;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.account-subtitle {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.account-field {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.account-field label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #475569;
+  margin-bottom: 0.4rem;
+}
+
+.account-field input {
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.35);
+  color: #1e293b;
+  font-size: 0.95rem;
+  outline: none;
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
