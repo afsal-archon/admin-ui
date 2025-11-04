@@ -1,36 +1,67 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  FiBarChart2,
+  FiInbox,
+  FiSettings,
+  FiUsers,
+  FiUser,
+  FiLogOut,
+} from "react-icons/fi";
 import "./Sidebar.css";
 
 export default function Sidebar() {
   const [active, setActive] = useState("Overview");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Menu configuration with routes
-  // Menu configuration with routes
-const menuItems = [
-  { name: "Overview", icon: "📊", path: "/dashboard" },
-  { name: "Inbox", icon: "📥", path: "/support" }, // ✅ Correct route path
-  { name: "Configuration", icon: "👥", path: "/prompt" },
-  { name: "Agent", icon: "📄", path: "/Agent" },
-];
+  const BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+  const TOKEN = localStorage.getItem("auth_token");
 
- // Handle menu clicks
+  const menuItems = [
+    { name: "Overview", icon: <FiBarChart2 />, path: "/dashboard" },
+    { name: "Inbox", icon: <FiInbox />, path: "/support" },
+    { name: "Configuration", icon: <FiSettings />, path: "/prompt" },
+    { name: "Agent", icon: <FiUsers />, path: "/agent" },
+  ];
+
   const handleClick = (item) => {
     setActive(item.name);
     navigate(item.path);
   };
 
-  // Handle account redirect
   const handleAccountClick = () => {
     setActive("Account");
     navigate("/account");
   };
 
-  // Handle logout (you can later add logic to clear auth)
-  const handleLogout = () => {
-    console.log("Logging out...");
-    navigate("/");
+  const handleLogout = async () => {
+    if (!window.confirm("Are you sure you want to logout?")) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${BASE_URL}/auth/logout`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.message || "Logged out successfully!");
+        localStorage.clear();
+        navigate("/");
+      } else {
+        alert(`⚠️ Logout failed: ${data.detail || "Unknown error"}`);
+      }
+    } catch (err) {
+      console.error("Logout Error:", err);
+      alert("❌ Network Error during logout!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,10 +91,14 @@ const menuItems = [
           className={`footer-item ${active === "Account" ? "active" : ""}`}
           onClick={handleAccountClick}
         >
-          👤 Account
+          <FiUser className="menu-icon" /> Account
         </button>
-        <button className="footer-item logout" onClick={handleLogout}>
-          🚪 Logout
+        <button
+          className={`footer-item logout ${loading ? "disabled" : ""}`}
+          onClick={handleLogout}
+          disabled={loading}
+        >
+          <FiLogOut className="menu-icon" /> {loading ? "Logging out..." : "Logout"}
         </button>
       </div>
     </aside>

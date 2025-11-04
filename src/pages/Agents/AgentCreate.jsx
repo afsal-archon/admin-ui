@@ -200,7 +200,7 @@ export default function AgentCreate() {
             <input
               type="password"
               name="password"
-              placeholder="********"
+              placeholder=""
               value={formData.password}
               onChange={handleChange}
               required

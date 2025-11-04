@@ -1,216 +1,146 @@
 /* ===========================================================
-   💬 Glassmorphic Support Chat (Final Enhanced Version)
+   💬 HelpDesk Support – Final Glassmorphic Vertical Layout (No Agent Section)
+   Shows 3 Conversations + Scroll View
 =========================================================== */
 
 .support-glass-layout {
   display: flex;
   height: 100vh;
-  width: 100%;
-  background: linear-gradient(135deg, #eef1f4, #f9fafc);
+  background: linear-gradient(135deg, #f8fafc 0%, #eef1f4 100%);
   font-family: "Poppins", sans-serif;
   color: #1e293b;
+  overflow: hidden;
 }
 
 /* ---------- Main Container ---------- */
 .support-glass-container {
   flex: 1;
   display: grid;
-  grid-template-columns: 360px 1fr 320px; /* ✅ Wider Inbox */
+  grid-template-columns: 340px 1fr 300px;
+  gap: 0.8rem;
+  padding: 0.8rem;
   height: 100vh;
-  overflow: hidden;
-  backdrop-filter: blur(25px);
-  box-shadow: inset 0 0 60px rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
 }
 
 /* ---------- Generic Glass Panel ---------- */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(25px);
-  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.08);
-  border-radius: 18px;
-  margin: 0.8rem;
-  overflow: hidden;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(25px) saturate(180%);
+  border-radius: 22px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 .glass-panel:hover {
-  transform: scale(1.01);
-  box-shadow: 0 12px 45px rgba(249, 115, 22, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(249, 115, 22, 0.15);
 }
 
 /* ---------- Inbox Panel ---------- */
 .inbox-panel {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding: 1rem 1.2rem;
+  padding: 1.2rem 1.4rem;
+  overflow: hidden;
 }
 
-/* Sticky header */
-.inbox-header {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.5),
-    rgba(255, 255, 255, 0.2)
-  );
-  backdrop-filter: blur(14px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 14px;
-  padding: 1rem 1rem 1.2rem;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
-}
-
-/* Title */
+/* ---------- Title ---------- */
 .inbox-header h2 {
   font-size: 1.25rem;
   font-weight: 700;
   color: #f97316;
-  letter-spacing: 0.4px;
+  margin-bottom: 1rem;
 }
 
-/* 🌤️ Glassy Search Input */
-.inbox-header input {
-  width: 80%;
-  margin-top: 0.8rem;
-  padding: 0.7rem 1rem;
-  border-radius: 12px;
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
-  outline: none;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.3),
-    rgba(255, 255, 255, 0.1)
-  );
-  color: #1e293b;
+/* ---------- Filter Buttons (Vertical) ---------- */
+.filter-buttons-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.filter-btn-vertical {
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
   font-size: 0.9rem;
   font-weight: 500;
-  box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.4),
-              0 2px 6px rgba(249, 115, 22, 0.1);
+  color: #f97316;
+  text-align: center;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.inbox-header input::placeholder {
-  color: #94a3b8;
-  font-weight: 400;
-  letter-spacing: 0.2px;
+.filter-btn-vertical:hover {
+  background: rgba(249, 115, 22, 0.1);
+  transform: scale(1.02);
 }
 
-/* Focus animation */
-.inbox-header input:focus {
-  border-color: rgba(249, 115, 22, 0.9);
-  box-shadow: 0 0 12px rgba(249, 115, 22, 0.3),
-              inset 0 0 6px rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.6);
-  transform: scale(1.03);
+.active-filter {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
 }
 
-/* Scrollable Inbox area */
-.inbox-scroll {
+/* ---------- Conversation List (3 Visible + Scroll) ---------- */
+.conversation-scroll {
   flex: 1;
   overflow-y: auto;
   padding-right: 6px;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  max-height: 250px;
+  scroll-behavior: smooth;
 }
 
-/* Custom Scrollbar */
-.inbox-scroll::-webkit-scrollbar {
+.conversation-scroll::-webkit-scrollbar {
   width: 6px;
 }
-.inbox-scroll::-webkit-scrollbar-thumb {
-  background: rgba(249, 115, 22, 0.6);
+.conversation-scroll::-webkit-scrollbar-thumb {
+  background: rgba(249, 115, 22, 0.5);
   border-radius: 10px;
 }
-.inbox-scroll::-webkit-scrollbar-thumb:hover {
+.conversation-scroll::-webkit-scrollbar-thumb:hover {
   background: rgba(249, 115, 22, 0.85);
 }
-.inbox-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.25);
-}
 
-/* ---------- Text Sections ---------- */
-.section {
-  margin-top: 1.6rem;
-}
-.section h4 {
-  font-size: 0.8rem;
+.section-title {
   color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.7px;
-  margin-bottom: 0.6rem;
-}
-.section ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.section li {
-  padding: 0.45rem 0.4rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #334155;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.25s ease;
-}
-.section li:hover {
-  background: rgba(249, 115, 22, 0.07);
-  color: #f97316;
-  transform: translateX(4px);
-}
-.section li.active {
-  color: #f97316;
+  font-size: 0.8rem;
   font-weight: 600;
-  background: rgba(249, 115, 22, 0.08);
-  border-left: 3px solid #f97316;
-  padding-left: 0.7rem;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.6px;
 }
 
-/* ---------- Conversation List ---------- */
-.conversation-list {
-  margin-top: 1.8rem;
-}
-.conversation-list h4 {
-  font-size: 0.8rem;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.7px;
-  margin-bottom: 0.8rem;
-}
 .chat-item {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  padding: 0.6rem 0.4rem;
-  border-radius: 10px;
-  cursor: pointer;
+  padding: 0.6rem 0.5rem;
+  border-radius: 12px;
   transition: all 0.25s ease;
+  cursor: pointer;
 }
 .chat-item:hover {
-  background: rgba(249, 115, 22, 0.07);
+  background: rgba(249, 115, 22, 0.08);
   transform: translateX(4px);
 }
 .chat-item.active-chat {
-  background: rgba(249, 115, 22, 0.1);
+  background: rgba(249, 115, 22, 0.12);
   border-left: 3px solid #f97316;
 }
-.chat-item img {
+.chat-avatar {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.6);
   object-fit: cover;
-}
-.chat-info {
-  flex: 1;
-  overflow: hidden;
-}
-.chat-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  border: 2px solid rgba(255, 255, 255, 0.7);
 }
 .chat-name {
   font-weight: 600;
@@ -222,187 +152,97 @@
   color: #94a3b8;
 }
 .chat-snippet {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: #64748b;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-top: 0.1rem;
 }
 
-/* ---------- Agents ---------- */
-.agents {
-  margin-top: 1.8rem;
-}
-.agent-scroll {
-  max-height: 200px; /* ✅ scrollable height */
-  overflow-y: auto;
-  padding-right: 6px;
-  margin-top: 0.5rem;
-}
-
-/* Orange glassy scrollbar for agents */
-.agent-scroll::-webkit-scrollbar {
-  width: 6px;
-}
-.agent-scroll::-webkit-scrollbar-thumb {
-  background: rgba(249, 115, 22, 0.6);
-  border-radius: 10px;
-}
-.agent-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(249, 115, 22, 0.85);
-}
-.agent-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.25);
-}
-.agent-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.8rem;
-}
-.agent-item img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-}
-.agent-name {
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-.agent-status {
-  font-size: 0.8rem;
-  color: #22c55e;
-}
-
-/* ---------- Middle Chat Panel ---------- */
+/* ---------- Chat Panel ---------- */
 .chat-panel {
   display: flex;
   flex-direction: column;
+  padding: 1rem;
 }
 
-/* ---------- Chat Header ---------- */
 .chat-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-  padding: 1rem 1.5rem;
-  backdrop-filter: blur(15px);
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
 }
 .chat-header h3 {
   font-size: 1rem;
   font-weight: 600;
 }
-.chat-header p {
-  font-size: 0.8rem;
-  color: #22c55e;
-}
-.header-buttons button {
-  border: none;
-  border-radius: 8px;
-  padding: 0.5rem 0.9rem;
-  margin-left: 0.5rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-.pause {
-  background: rgba(254, 243, 199, 0.7);
-  color: #92400e;
-}
-.close {
-  background: rgba(254, 226, 226, 0.7);
-  color: #b91c1c;
-}
 
-/* ---------- Chat Body (Scrollable) ---------- */
 .chat-body {
   flex: 1;
-  padding: 1.5rem;
+  overflow-y: auto;
+  padding: 1rem 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  overflow-y: auto;
-  scroll-behavior: smooth;
 }
 
-/* Chat Scrollbar */
-.chat-body::-webkit-scrollbar {
-  width: 6px;
-}
-.chat-body::-webkit-scrollbar-thumb {
-  background: rgba(249, 115, 22, 0.6);
-  border-radius: 10px;
-}
-.chat-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(249, 115, 22, 0.85);
-}
-.chat-body::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-/* Message Styles */
 .message {
   max-width: 70%;
-  padding: 0.9rem 1rem;
-  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
   font-size: 0.9rem;
-  line-height: 1.4;
-  transition: 0.3s;
+  line-height: 1.5;
 }
 .from-user {
+  align-self: flex-end;
   background: linear-gradient(135deg, #f97316, #fb923c);
   color: #fff;
-  align-self: flex-end;
-  box-shadow: 0 5px 15px rgba(249, 115, 22, 0.3);
 }
 .from-agent {
+  align-self: flex-start;
   background: rgba(255, 255, 255, 0.7);
   color: #111827;
-  align-self: flex-start;
 }
 
-/* ---------- Input Box ---------- */
+/* ---------- Chat Input ---------- */
 .chat-input {
   display: flex;
   align-items: center;
+  gap: 0.6rem;
   border-top: 1px solid rgba(255, 255, 255, 0.4);
-  padding: 1rem;
-  backdrop-filter: blur(20px);
+  padding-top: 1rem;
 }
 .chat-input input {
   flex: 1;
-  padding: 0.7rem 1rem;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.5);
-  outline: none;
+  padding: 0.8rem 1rem;
   background: rgba(255, 255, 255, 0.6);
+  outline: none;
 }
 .send-btn {
-  margin-left: 1rem;
   background: linear-gradient(90deg, #f97316, #fb923c);
-  color: #fff;
+  color: white;
   border: none;
   border-radius: 8px;
   padding: 0.7rem 1.3rem;
-  cursor: pointer;
   font-weight: 600;
-  transition: 0.3s;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 .send-btn:hover {
   background: linear-gradient(90deg, #fb923c, #f97316);
   transform: translateY(-2px);
 }
 
-/* ---------- Right Info Panel ---------- */
+/* ---------- Info Panel ---------- */
 .info-panel {
-  padding: 1.2rem;
+  padding: 1.2rem 1.4rem;
 }
 .info-panel h4 {
   font-size: 1.05rem;
   font-weight: 600;
-  margin-bottom: 0.4rem;
 }
 .channel {
   color: #6b7280;
@@ -414,27 +254,23 @@
   padding-top: 1rem;
   margin-bottom: 1rem;
 }
-textarea {
-  width: 100%;
-  height: 80px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  padding: 0.7rem;
-  outline: none;
-  resize: none;
-  background: rgba(255, 255, 255, 0.5);
-  color: #111827;
+
+/* ---------- Scrollbars ---------- */
+::-webkit-scrollbar {
+  width: 6px;
 }
-.activity-section p {
-  font-size: 0.85rem;
-  color: #374151;
-  margin-bottom: 0.4rem;
+::-webkit-scrollbar-thumb {
+  background: rgba(249, 115, 22, 0.6);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(249, 115, 22, 0.85);
 }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1024px) {
   .support-glass-container {
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: 280px 1fr;
   }
   .info-panel {
     display: none;

@@ -3,60 +3,84 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #eef1f4, #f9fafc);
-  font-family: "Poppins", sans-serif;
+  background: radial-gradient(circle at top left, #fff7ed, #ebeaea, #fff);
+  font-family: "Inter", sans-serif;
 }
 
 .account-container {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 2rem 2.5rem;
   width: 420px;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 18px;
-  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(25px);
-  text-align: center;
-  animation: fadeIn 0.5s ease-in-out;
+  box-shadow: 0 8px 40px rgba(249, 115, 22, 0.15);
+  animation: fadeIn 0.8s ease;
 }
 
 .account-title {
-  color: #f97316;
   font-size: 1.6rem;
-  font-weight: 700;
+  font-weight: 800;
+  text-align: center;
+  background: linear-gradient(90deg, #f97316, #fb923c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.3rem;
 }
 
 .account-subtitle {
-  color: #64748b;
-  font-size: 0.9rem;
+  text-align: center;
+  color: #6b7280;
   margin-bottom: 1.5rem;
+  font-size: 0.95rem;
 }
 
 .account-field {
   display: flex;
   flex-direction: column;
-  text-align: left;
   margin-bottom: 1rem;
 }
 
 .account-field label {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #475569;
+  font-size: 0.9rem;
+  color: #374151;
   margin-bottom: 0.4rem;
+  font-weight: 600;
 }
 
 .account-field input {
-  padding: 0.7rem 1rem;
-  border-radius: 12px;
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.35);
-  color: #1e293b;
+  border: 2px solid #f97316;
+  border-radius: 10px;
+  padding: 0.7rem;
   font-size: 0.95rem;
+  color: #111827;
+  background: rgba(255, 255, 255, 0.9);
   outline: none;
-  cursor: not-allowed;
+  transition: 0.3s ease;
+}
+
+.account-field input:focus {
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
+}
+
+.loading-text,
+.error-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #f97316;
+  text-align: center;
+}
+
+.error-text {
+  color: #ef4444;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

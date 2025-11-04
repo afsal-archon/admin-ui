@@ -53,7 +53,7 @@ export default function SignupPage() {
   return (
     <div className="signup-page">
       <form onSubmit={handleSubmit} className="signup-card">
-        <h2 className="signup-title">Create a New Tenant ✨</h2>
+        <h2 className="signup-title">Create a New Tenant</h2>
         <p className="signup-subtitle">
           Register your company and create your first HelpDesk admin account.
         </p>
