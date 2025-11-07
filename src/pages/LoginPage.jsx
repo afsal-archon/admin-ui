@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
+// import "../../styles/dashboardagent.css";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ username: "", password: "" });
-  const [isAgentLogin, setIsAgentLogin] = useState(false); // toggle between tenant/agent
+  const [isAgentLogin, setIsAgentLogin] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const BASE_URL = "http://127.0.0.1:8000/api"; // backend root
+  const BASE_URL = "http://127.0.0.1:8000/api";
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -23,15 +24,14 @@ export default function LoginPage() {
     console.log("🟢 Login started:", form, "Type:", isAgentLogin ? "Agent" : "Tenant");
 
     try {
-      // ✅ Choose endpoint based on login type
       const loginEndpoint = isAgentLogin
         ? `${BASE_URL}/auth/agent/login`
         : `${BASE_URL}/auth/tenant/login`;
 
-      // ✅ Prepare request body
-      const body = isAgentLogin
-        ? { username: form.username, password: form.password } // Agent API expects agent_email
-        : { username: form.username, password: form.password }; // Tenant API expects username
+      const body = {
+        username: form.username,
+        password: form.password,
+      };
 
       const res = await fetch(loginEndpoint, {
         method: "POST",
@@ -43,25 +43,39 @@ export default function LoginPage() {
       const data = await res.json();
       console.log("📦 Login API data:", data);
 
-      // ✅ Success
       if (res.ok && data.access_token) {
         console.log("✅ Login successful!");
 
-        // Save login data to localStorage
-        localStorage.setItem("auth_token", data.access_token);
-        localStorage.setItem("username", form.username);
-        localStorage.setItem("user_type", data.user_type || (isAgentLogin ? "agent" : "tenant"));
-        localStorage.setItem("tenant_id", data.tenant_id || "");
-        localStorage.setItem("expires_in", data.expires_in || 0);
+        // // Save credentials
+        // localStorage.setItem("auth_token", data.access_token);
+        // localStorage.setItem("username", form.username);
+        // localStorage.setItem("user_type", data.user_type || (isAgentLogin ? "agent" : "tenant"));
+        // localStorage.setItem("tenant_id", data.tenant_id || "");
+        // localStorage.setItem("expires_in", data.expires_in || 0);
+         if (isAgentLogin) {
+          localStorage.setItem("agent_token", data.access_token);
+          localStorage.setItem("agent_username", form.username);
+          localStorage.setItem("tenant_id", data.tenant_id || "");
+          localStorage.setItem("user_type", "agent");
+          console.log("💾 Agent token stored:", data.access_token);
+        } else {
+          localStorage.setItem("tenant_token", data.access_token);
+          localStorage.setItem("tenant_username", form.username);
+          localStorage.setItem("tenant_id", data.tenant_id || "");
+          localStorage.setItem("user_type", "tenant");
+          console.log("💾 Tenant token stored:", data.access_token);
+        }
 
         setMessage("✅ Login successful!");
 
-        // ✅ Role-based redirection
+        // ✅ Updated redirection logic
         console.log("➡️ Redirecting to respective dashboard...");
         setTimeout(() => {
           if (isAgentLogin || data.user_type === "agent") {
+            // 🔥 redirect agent to Agent Dashboard
             navigate("/agent-dashboard");
           } else {
+            // default tenant dashboard
             navigate("/dashboard");
           }
         }, 1000);
@@ -82,15 +96,14 @@ export default function LoginPage() {
     <div className="auth-page">
       <form onSubmit={handleSubmit} className="auth-card">
         <h2 className="auth-title">
-          {isAgentLogin ? "Agent Login " : "Tenant Login "}
+          {isAgentLogin ? "Agent Login" : "Tenant Login"}
         </h2>
         <p className="auth-subtitle">
           {isAgentLogin
-            ? "Login to your Agent Console"
+            ? "Login to your Agent Dashboard"
             : "Login to your HelpDesk Dashboard"}
         </p>
 
-        {/* Username or Agent Email */}
         <input
           type="text"
           name="username"
@@ -101,7 +114,6 @@ export default function LoginPage() {
           required
         />
 
-        {/* Password */}
         <input
           type="password"
           name="password"
@@ -112,15 +124,13 @@ export default function LoginPage() {
           required
         />
 
-        {/* Login Button */}
         <button type="submit" className="auth-btn" disabled={loading}>
           {loading ? "Signing in..." : "Sign In"}
         </button>
 
-        {/* Feedback message */}
         {message && <p className="response-msg">{message}</p>}
 
-        {/* Switch between Tenant/Agent */}
+        {/* Switch Login Mode */}
         <p className="auth-footer">
           {isAgentLogin ? (
             <>

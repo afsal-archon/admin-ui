@@ -1651,6 +1651,230 @@
 
 
 
+// import React, { useEffect, useState } from "react";
+// import Sidebar from "../../components/Sidebar";
+// import "./SupportPage.css";
+
+// export default function SupportPage() {
+//   const [filterType, setFilterType] = useState("all");
+//   const [activeChat, setActiveChat] = useState(null);
+//   const [chatList, setChatList] = useState([]);
+//   const [messages, setMessages] = useState([]);
+//   const [activeAgent, setActiveAgent] = useState(null); // ✅ agent info for right panel
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState("");
+
+//   const BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+//   const TOKEN = localStorage.getItem("auth_token");
+
+//   /* ---------------- Fetch Conversations ---------------- */
+//   const fetchChats = async (type = "all") => {
+//     setLoading(true);
+//     setError("");
+//     try {
+//       const res = await fetch(`${BASE_URL}/tenants/conversations/inbox`, {
+//         headers: {
+//           Authorization: `Bearer ${TOKEN}`,
+//           "Content-Type": "application/json",
+//         },
+//       });
+
+//       if (!res.ok) throw new Error(`Chat API Error ${res.status}`);
+//       const data = await res.json();
+//       let conversations = data.conversations || [];
+
+//       if (type === "active") {
+//         conversations = conversations.filter((c) => c.status === "attending");
+//       } else if (type === "closed") {
+//         conversations = conversations.filter((c) => c.status === "closed");
+//       } else if (type === "ai") {
+//         conversations = conversations.filter((c) => c.is_escalated);
+//       }
+
+//       setChatList(conversations);
+//     } catch (err) {
+//       console.error("⚠️ Chat fetch failed:", err);
+//       setError(err.message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   /* ---------------- Fetch Messages ---------------- */
+//   const fetchMessages = async (conversationId) => {
+//     try {
+//       setMessages([]);
+//       const res = await fetch(
+//         `${BASE_URL}/messages?conversation_id=${conversationId}&limit=100`,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${TOKEN}`,
+//             "Content-Type": "application/json",
+//           },
+//         }
+//       );
+
+//       if (!res.ok) throw new Error(`Message API Error ${res.status}`);
+//       const data = await res.json();
+//       setMessages(data);
+//     } catch (err) {
+//       console.error("⚠️ Message fetch failed:", err);
+//       setError(err.message);
+//     }
+//   };
+
+//   /* ---------------- Handle Chat Click ---------------- */
+//   const handleChatClick = (chatId) => {
+//     setActiveChat(chatId);
+//     fetchMessages(chatId);
+
+//     // ✅ Find selected chat and store agent details
+//     const selectedChat = chatList.find((c) => c.id === chatId);
+//     if (selectedChat?.assigned_agent) {
+//       setActiveAgent(selectedChat.assigned_agent);
+//     } else {
+//       setActiveAgent(null);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchChats(filterType);
+//   }, [filterType]);
+
+//   return (
+//     <div className="support-glass-layout">
+//       <Sidebar />
+
+//       <div className="support-glass-container">
+//         {/* ---------- LEFT PANEL ---------- */}
+//         <aside className="glass-panel inbox-panel">
+//           <div className="inbox-header">
+//             <h2>Inbox</h2>
+//           </div>
+
+//           {/* ✅ Filter Buttons */}
+//           <div className="filter-buttons-vertical">
+//             {["ai", "all", "active", "closed"].map((type) => (
+//               <button
+//                 key={type}
+//                 className={`filter-btn-vertical ${
+//                   filterType === type ? "active-filter" : ""
+//                 }`}
+//                 onClick={() => setFilterType(type)}
+//               >
+//                 {type === "ai"
+//                   ? "AI Conversations"
+//                   : type.charAt(0).toUpperCase() + type.slice(1)}
+//               </button>
+//             ))}
+//           </div>
+
+//           {/* ✅ Conversation List */}
+//           <div className="conversation-scroll">
+//             <h4 className="section-title">Conversations</h4>
+//             {loading ? (
+//               <p className="loading-text">Loading conversations...</p>
+//             ) : error ? (
+//               <p className="error-text">⚠️ {error}</p>
+//             ) : chatList.length === 0 ? (
+//               <p className="error-text">No conversations found.</p>
+//             ) : (
+//               chatList.map((chat) => (
+//                 <div
+//                   key={chat.id}
+//                   className={`chat-item ${
+//                     activeChat === chat.id ? "active-chat" : ""
+//                   }`}
+//                   onClick={() => handleChatClick(chat.id)}
+//                 >
+//                   <img
+//                     src="https://cdn-icons-png.flaticon.com/512/1946/1946429.png"
+//                     alt="user"
+//                     className="chat-avatar"
+//                   />
+//                   <div className="chat-info">
+//                     <div className="chat-header-row">
+//                       <p className="chat-name">Conversation #{chat.id}</p>
+//                       <span className="chat-time">
+//                         {new Date(chat.created_at).toLocaleTimeString()}
+//                       </span>
+//                     </div>
+//                     <p className="chat-snippet">
+//                       {chat.last_message?.text || "No messages yet"}
+//                     </p>
+//                   </div>
+//                 </div>
+//               ))
+//             )}
+//           </div>
+//         </aside>
+
+//         {/* ---------- MIDDLE PANEL (Chat) ---------- */}
+//         <main className="glass-panel chat-panel">
+//           <div className="chat-header">
+//             <h3>
+//               {activeChat
+//                 ? `Conversation #${activeChat}`
+//                 : "Select a conversation"}
+//             </h3>
+//           </div>
+
+//           {/* Chat Messages */}
+//           <div className="chat-body">
+//             {activeChat && messages.length > 0 ? (
+//               messages.map((msg) => (
+//                 <div
+//                   key={msg.id}
+//                   className={`message ${
+//                     msg.sender === "user" ? "from-user" : "from-agent"
+//                   }`}
+//                 >
+//                   {msg.text}
+//                 </div>
+//               ))
+//             ) : activeChat && messages.length === 0 ? (
+//               <p className="loading-text">No messages yet.</p>
+//             ) : (
+//               <p className="loading-text">Select a chat to view messages.</p>
+//             )}
+//           </div>
+//         </main>
+
+//         {/* ---------- RIGHT PANEL ---------- */}
+//         <aside className="glass-panel info-panel">
+//           <h4>Agent Info</h4>
+//           <p className="channel">Web Chat</p>
+
+//           <div className="info-block">
+//             <p>
+//               <strong>ID:</strong> {activeChat || "-"}
+//             </p>
+
+//             {activeAgent ? (
+//               <>
+//                 <p>
+//                   <strong>Agent ID:</strong> {activeAgent.id}
+//                 </p>
+//                 <p>
+//                   <strong>Name:</strong> {activeAgent.name}
+//                 </p>
+//                 <p>
+//                   <strong>Email:</strong> {activeAgent.email}
+//                 </p>
+//               </>
+//             ) : (
+//               <p className="error-text">No assigned agent.</p>
+//             )}
+//           </div>
+//         </aside>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import "./SupportPage.css";
@@ -1660,9 +1884,10 @@ export default function SupportPage() {
   const [activeChat, setActiveChat] = useState(null);
   const [chatList, setChatList] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [activeAgent, setActiveAgent] = useState(null); // ✅ agent info for right panel
+  const [activeAgent, setActiveAgent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [closing, setClosing] = useState(false);
 
   const BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
   const TOKEN = localStorage.getItem("auth_token");
@@ -1723,12 +1948,39 @@ export default function SupportPage() {
     }
   };
 
+  /* ---------------- Close Conversation ---------------- */
+  const handleCloseConversation = async () => {
+    if (!activeChat) return;
+    setClosing(true);
+    try {
+      const res = await fetch(`${BASE_URL}/conversations/${activeChat}/close`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to close conversation");
+
+      alert(`Conversation #${activeChat} closed successfully.`);
+      fetchChats(filterType);
+      setActiveChat(null);
+      setMessages([]);
+      setActiveAgent(null);
+    } catch (err) {
+      console.error("⚠️ Close conversation failed:", err);
+      alert("Error closing conversation.");
+    } finally {
+      setClosing(false);
+    }
+  };
+
   /* ---------------- Handle Chat Click ---------------- */
   const handleChatClick = (chatId) => {
     setActiveChat(chatId);
     fetchMessages(chatId);
 
-    // ✅ Find selected chat and store agent details
     const selectedChat = chatList.find((c) => c.id === chatId);
     if (selectedChat?.assigned_agent) {
       setActiveAgent(selectedChat.assigned_agent);
@@ -1817,6 +2069,18 @@ export default function SupportPage() {
                 ? `Conversation #${activeChat}`
                 : "Select a conversation"}
             </h3>
+
+            {activeChat && (
+              <div className="chat-actions">
+                <button
+                  className="close-chat-btn"
+                  onClick={handleCloseConversation}
+                  disabled={closing}
+                >
+                  {closing ? "Closing..." : "Close"}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Chat Messages */}

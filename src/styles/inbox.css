@@ -1,0 +1,234 @@
+/* ============================================================
+   INBOX PAGE - CLEAN MODERN HELP DESK STYLE (UPDATED, NO IMAGES)
+   ============================================================ */
+
+/* ---------- HEADER ---------- */
+.inbox-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.inbox-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.inbox-header p {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* ---------- FILTER CONTROLS ---------- */
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 6px 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.filter-controls:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.filter-controls select {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.9rem;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.filter-controls svg {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+/* ---------- REFRESH BUTTON ---------- */
+.refresh-btn {
+  background: #0ea5e9;
+  border: none;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+  background: #0284c7;
+}
+
+/* ---------- CONVERSATION LIST ---------- */
+.conversation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------- CONVERSATION ITEM ---------- */
+.conversation-item {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.25s ease;
+  border-left: 5px solid transparent;
+  cursor: pointer;
+}
+
+.conversation-item.unread {
+  border-left: 5px solid #0ea5e9;
+  background: #f0f9ff;
+}
+
+.conversation-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- HEADER SECTION ---------- */
+.conversation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-transform: capitalize;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.2px;
+}
+
+.status-badge.attending {
+  background: #0ea5e9;
+}
+.status-badge.waiting_human {
+  background: #facc15;
+  color: #111827;
+}
+.status-badge.escalated {
+  background: #ef4444;
+}
+.status-badge.resolved {
+  background: #10b981;
+}
+
+/* ---------- ONLINE STATUS ---------- */
+.online-indicator {
+  font-size: 0.8rem;
+  color: #10b981;
+}
+
+/* ---------- BODY SECTION ---------- */
+.conversation-body {
+  margin-top: 4px;
+}
+
+.last-message {
+  font-size: 0.95rem;
+  color: #374151;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.conversation-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* ---------- FOOTER SECTION ---------- */
+.conversation-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+.msg-count {
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.unread-badge {
+  background: #0ea5e9;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+/* ---------- EMPTY / ERROR / INFO STATES ---------- */
+.info-text,
+.error-text {
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 30px;
+}
+
+.info-text {
+  color: #6b7280;
+}
+
+.error-text {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .inbox-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .filter-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .conversation-item {
+    padding: 14px 16px;
+  }
+
+  .last-message {
+    white-space: normal;
+  }
+}

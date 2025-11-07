@@ -1,6 +1,6 @@
 /* ===========================================================
-   💬 HelpDesk Support – Final Glassmorphic Vertical Layout (No Agent Section)
-   Shows 3 Conversations + Scroll View
+   💬 HelpDesk Support – Final Glassmorphic Vertical Layout
+   Includes Close Button in Middle Panel
 =========================================================== */
 
 .support-glass-layout {
@@ -176,8 +176,37 @@
 .chat-header h3 {
   font-size: 1rem;
   font-weight: 600;
+  color: #1e293b;
 }
 
+/* ---------- Close Button ---------- */
+.chat-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.close-chat-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.close-chat-btn:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+}
+.close-chat-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- Chat Body ---------- */
 .chat-body {
   flex: 1;
   overflow-y: auto;
