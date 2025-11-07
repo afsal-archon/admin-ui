@@ -210,6 +210,8 @@ import AccountPage from "./pages/Account/AccountPage";
 
 /* 👥 Agent Management */
 import AccountAgent from "./pages/Account/AccountAgent"; // ✅ this is your Agent page now
+import AgentCreate from "./pages/Agents/AgentCreate";
+
 
 /* 🆕 Modern Agent Dashboard */
 import DashboardAgent from "./pages/AgentDashboard/DashboardAgent";
@@ -234,6 +236,7 @@ export default function AppRouter() {
         <Route path="/account" element={<AccountPage />} />
 
         {/* 🧭 Agent Dashboard */}
+        <Route path="/agent" element={<AgentCreate />} />
         <Route path="/agent-dashboard" element={<DashboardAgent />} />
         <Route path="/inbox" element={<Inbox />} />
         <Route path="/conversation/:conversationId" element={<ConversationView />} />

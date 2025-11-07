@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import SupportPage from "./pages/Support/SupportPage";
 import PromptPage from "./pages/Prompt/PromptPage";
 import AccountPage from "./pages/Account/AccountPage";
+import AgentCreate from "./pages/Agents/AgentCreate";
 
 /* 👥 Agent Management */
 import AccountAgent from "./pages/Account/AccountAgent"; // ✅ this is your Agent page now
@@ -35,6 +36,8 @@ export default function AppRouter() {
         <Route path="/support" element={<SupportPage />} />
         <Route path="/prompt" element={<PromptPage />} />
         <Route path="/account" element={<AccountPage />} />
+        <Route path="/agent" element={<AgentCreate />} />
+        
 
         {/* 🧭 Agent Dashboard */}
         <Route path="/agent-dashboard" element={<DashboardAgent />} />
