@@ -7,7 +7,7 @@
   display: flex;
   height: 100vh;
   width: 100%;
-  background: linear-gradient(145deg, #edf0f5 0%, #f8fafc 100%);
+  background: linear-gradient(145deg, #dedfe2 0%, #f8fafc 100%);
   font-family: "Poppins", "Inter", sans-serif;
   color: #1e293b;
   overflow: hidden;

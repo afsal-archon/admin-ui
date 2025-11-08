@@ -337,57 +337,208 @@
 //   );
 // }
 
-import React, { useState } from "react";
+// import React, { useState } from "react";
+// import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+// import "./TargetChart.css";
+
+// export default function TargetChart() {
+//   const [filter, setFilter] = useState("daily");
+
+//   // Data changes based on filter
+//   const dataSets = {
+//     daily: [
+//       { name: "Total Conversations", value: 678, color: "#f97316" },
+//       { name: "Active", value: 210, color: "#22c55e" },
+//       { name: "Waiting", value: 90, color: "#3b82f6" },
+//       { name: "Escalated", value: 45, color: "#ef4444" },
+//     ],
+//     weekly: [
+//       { name: "Total Conversations", value: 1500, color: "#f97316" },
+//       { name: "Active", value: 850, color: "#22c55e" },
+//       { name: "Waiting", value: 230, color: "#3b82f6" },
+//       { name: "Escalated", value: 120, color: "#ef4444" },
+//     ],
+//     monthly: [
+//       { name: "Total Conversations", value: 5800, color: "#f97316" },
+//       { name: "Active", value: 3200, color: "#22c55e" },
+//       { name: "Waiting", value: 700, color: "#3b82f6" },
+//       { name: "Escalated", value: 450, color: "#ef4444" },
+//     ],
+//   };
+
+//   const data = dataSets[filter];
+//   const total = data[0].value;
+
+//   return (
+//     <div className="target-chart-card glass-card">
+//       <div className="chart-header">
+//         <h3>Conversations Overview</h3>
+//         <div className="filter-group">
+//           {["daily", "weekly", "monthly"].map((item) => (
+//             <button
+//               key={item}
+//               className={`filter-btn ${filter === item ? "active" : ""}`}
+//               onClick={() => setFilter(item)}
+//             >
+//               {item.charAt(0).toUpperCase() + item.slice(1)}
+//             </button>
+//           ))}
+//         </div>
+//       </div>
+
+//       <div className="target-chart-wrapper">
+//         {/* Donut Chart */}
+//         <div className="chart-container">
+//           <ResponsiveContainer width={260} height={260}>
+//             <PieChart>
+//               <Pie
+//                 data={data}
+//                 dataKey="value"
+//                 cx="50%"
+//                 cy="50%"
+//                 innerRadius={85}
+//                 outerRadius={110}
+//                 startAngle={90}
+//                 endAngle={450}
+//                 stroke="none"
+//               >
+//                 {data.map((entry, index) => (
+//                   <Cell key={index} fill={entry.color} />
+//                 ))}
+//               </Pie>
+//             </PieChart>
+//           </ResponsiveContainer>
+
+//           <div className="center-label">
+//             <h3>{total}</h3>
+//             <p></p>
+//           </div>
+//         </div>
+
+//         {/* Legends */}
+//         <div className="target-legend">
+//           {data.map((entry, index) => (
+//             <div key={index} className="legend-item">
+//               <div
+//                 className="legend-dot"
+//                 style={{ background: entry.color }}
+//               ></div>
+//               <span>{entry.name}</span>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import "./TargetChart.css";
 
 export default function TargetChart() {
-  const [filter, setFilter] = useState("daily");
+  const [filter, setFilter] = useState("all");
+  const [data, setData] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Data changes based on filter
-  const dataSets = {
-    daily: [
-      { name: "Total Conversations", value: 678, color: "#f97316" },
-      { name: "Active", value: 210, color: "#22c55e" },
-      { name: "Waiting", value: 90, color: "#3b82f6" },
-      { name: "Escalated", value: 45, color: "#ef4444" },
-    ],
-    weekly: [
-      { name: "Total Conversations", value: 1500, color: "#f97316" },
-      { name: "Active", value: 850, color: "#22c55e" },
-      { name: "Waiting", value: 230, color: "#3b82f6" },
-      { name: "Escalated", value: 120, color: "#ef4444" },
-    ],
-    monthly: [
-      { name: "Total Conversations", value: 5800, color: "#f97316" },
-      { name: "Active", value: 3200, color: "#22c55e" },
-      { name: "Waiting", value: 700, color: "#3b82f6" },
-      { name: "Escalated", value: 450, color: "#ef4444" },
-    ],
+  const BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+  const TOKEN = localStorage.getItem("auth_token");
+
+  // Fetch dashboard data
+  const fetchOverview = async (period = "all") => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch(
+        `${BASE_URL}/tenants/dashboard/overview?period=${period}`,
+        {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const result = await res.json();
+
+      // Transform API response into chart format
+      const chartData = [
+        {
+          name: "Total Conversations",
+          value: result.total_conversations || 0,
+          color: "#f97316",
+        },
+        {
+          name: "Active",
+          value: result.active_conversations || 0,
+          color: "#22c55e",
+        },
+        {
+          name: "Waiting",
+          value: result.waiting_conversations || 0,
+          color: "#3b82f6",
+        },
+        {
+          name: "Escalated",
+          value: result.escalated_conversations || 0,
+          color: "#ef4444",
+        },
+      ];
+
+      setData(chartData);
+      setTotal(result.total_conversations || 0);
+    } catch (err) {
+      console.error("❌ Dashboard Fetch Error:", err);
+      setError("Failed to load data. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const data = dataSets[filter];
-  const total = data[0].value;
+  // Fetch data when component mounts or filter changes
+  useEffect(() => {
+    fetchOverview(filter);
+  }, [filter]);
+
+  // ---------- UI ----------
+  if (loading) {
+    return <div className="target-chart-card glass-card">Loading...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="target-chart-card glass-card error-text">{error}</div>
+    );
+  }
 
   return (
     <div className="target-chart-card glass-card">
+      {/* ---------- HEADER ---------- */}
       <div className="chart-header">
         <h3>Conversations Overview</h3>
         <div className="filter-group">
-          {["daily", "weekly", "monthly"].map((item) => (
+          {["today", "week", "month", "all"].map((item) => (
             <button
               key={item}
               className={`filter-btn ${filter === item ? "active" : ""}`}
               onClick={() => setFilter(item)}
             >
-              {item.charAt(0).toUpperCase() + item.slice(1)}
+              {item === "all"
+                ? "All-time"
+                : item.charAt(0).toUpperCase() + item.slice(1)}
             </button>
           ))}
         </div>
       </div>
 
+      {/* ---------- CHART + LEGEND ---------- */}
       <div className="target-chart-wrapper">
-        {/* Donut Chart */}
         <div className="chart-container">
           <ResponsiveContainer width={260} height={260}>
             <PieChart>
@@ -409,13 +560,14 @@ export default function TargetChart() {
             </PieChart>
           </ResponsiveContainer>
 
+          {/* ---------- Center Value ---------- */}
           <div className="center-label">
             <h3>{total}</h3>
-            <p></p>
+            <p>Total Conversations</p>
           </div>
         </div>
 
-        {/* Legends */}
+        {/* ---------- LEGEND ---------- */}
         <div className="target-legend">
           {data.map((entry, index) => (
             <div key={index} className="legend-item">
@@ -423,7 +575,9 @@ export default function TargetChart() {
                 className="legend-dot"
                 style={{ background: entry.color }}
               ></div>
-              <span>{entry.name}</span>
+              <span>
+                {entry.name}: <strong>{entry.value}</strong>
+              </span>
             </div>
           ))}
         </div>

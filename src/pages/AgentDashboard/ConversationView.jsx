@@ -774,7 +774,10 @@ const AgentConsole = () => {
   useEffect(() => {
     const tenantId = localStorage.getItem("tenant_id");
     const agentId = localStorage.getItem("username");
-    const token = localStorage.getItem("auth_token");
+    const token = localStorage.getItem("agent_token");
+    console.log("🏢 Tenant ID:", tenantId || "❌ Not found");
+    console.log("👤 Agent Username:", agentId || "❌ Not found");
+    console.log("🔑 Auth Token:", token ? token.slice(0, 20) + "..." : "❌ Not found");
 
     if (!tenantId || !agentId || !token) {
       console.warn("❌ Missing tenant_id or agent_id — please login again");
