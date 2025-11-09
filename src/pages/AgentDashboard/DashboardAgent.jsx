@@ -839,14 +839,14 @@ export default function DashboardAgent() {
   useEffect(() => {
     const fetchAgent = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/agent/status`, {
+        const res = await fetch(`${BASE_URL}/agents/status`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.status === 401) throw new Error("Unauthorized");
         const data = await res.json();
         setAgent({
-          name: data.name || "Agent",
-          status: data.status || "offline",
+          name: data.agent_name || "Agent",
+          status: data.is_online || "offline",
         });
       } catch (err) {
         console.error("❌ Agent fetch error:", err);
@@ -969,14 +969,19 @@ export default function DashboardAgent() {
 
           {/* Profile + Notifications */}
           <div className="profile">
-            <div className="profile-img-wrapper">
-              <div className={`profile-circle ${agent.status}`}></div>
-              <span className={`status-dot ${agent.status}`}></span>
-              {notifCount > 0 && (
-                <span className="notif-badge">{notifCount}</span>
-              )}
-            </div>
-          </div>
+         <div className="profile-img-wrapper">
+          <div className={`profile-circle ${agent.status}`}></div>
+
+         {/* Status Dot */}
+         <span
+        className={`status-dot ${agent.is_online ? "online" : "offline"}`}
+        ></span>
+
+      {/* Notifications */}
+      {notifCount > 0 && <span className="notif-badge">{notifCount}</span>}
+      </div>
+      </div>
+
         </header>
 
         {/* ---------- STAT CARDS ---------- */}

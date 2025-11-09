@@ -152,14 +152,14 @@
   animation: pulse-online 1.6s infinite;
 }
 
+.status-dot.offline {
+  background-color: #ef4444; /* Red */
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
 .status-dot.away {
   background-color: #facc15; /* Yellow */
   box-shadow: 0 0 6px rgba(250, 204, 21, 0.5);
-}
-
-.status-dot.offline {
-  background-color: #9ca3af; /* Gray */
-  opacity: 0.8;
 }
 
 /* Online pulse animation */

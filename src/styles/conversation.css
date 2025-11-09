@@ -10,15 +10,6 @@ body {
   background: #f5f5f5;
 }
 
-/*
-.app {
-  display: grid;
-  grid-template-columns: 60px 300px 1fr 300px;
-  height: 100vh;
-  background: #ffffff;
-}
-*/
-
 .app {
   display: grid;
   grid-template-columns: 300px 1fr 300px;
@@ -39,8 +30,6 @@ body {
 }
 
 /* Sidebar Styles */
-
-
 .logo {
   color: #ff6b2c;
   font-weight: 700;
@@ -353,6 +342,11 @@ body {
   background: #fef3c7;
 }
 
+.status-badge.connecting {
+  color: #6b7280;
+  background: #f3f4f6;
+}
+
 .chat-actions {
   display: flex;
   gap: 10px;
@@ -427,12 +421,21 @@ body {
 .messages-container {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
   background: #f9fafb;
   display: flex;
   flex-direction: column;
-  gap: 15px;
   position: relative;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.empty-state {
+  text-align: center;
+  color: #9ca3af;
+  padding: 40px 20px;
+  font-size: 14px;
 }
 
 .pause-banner {
@@ -515,8 +518,15 @@ body {
   font-weight: 500;
 }
 
+/* ============================================ */
+/* MESSAGE STYLES - USER LEFT, AGENT RIGHT */
+/* ============================================ */
+
 .message {
   display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  max-width: 70%;
   animation: slideIn 0.3s ease;
 }
 
@@ -531,40 +541,69 @@ body {
   }
 }
 
-.message.agent {
-  justify-content: flex-end;
+/* User messages - align left */
+.message.user {
+  align-self: flex-start;
+  align-items: flex-start;
 }
 
+/* Agent messages - align right */
+.message.agent {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+/* Customer class compatibility */
 .message.customer {
-  justify-content: flex-start;
+  align-self: flex-start;
+  align-items: flex-start;
 }
 
 .message-bubble {
-  max-width: 70%;
   padding: 12px 16px;
   border-radius: 12px;
   font-size: 14px;
   line-height: 1.5;
   word-wrap: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
-.message.agent .message-bubble {
-  background: #ff6b2c;
-  color: #ffffff;
-  border-bottom-right-radius: 4px;
+/* User bubble - light green background, left aligned */
+.message.user .message-bubble,
+.user-bubble {
+  background: #d4f8d4;
+  color: #1f2937;
+  border-bottom-left-radius: 4px;
 }
 
-.message.agent .message-bubble.orange-bubble {
-  background: #ff6b2c;
-  color: #ffffff;
-}
-
-.message.customer .message-bubble {
+/* Agent bubble - white background, right aligned */
+.message.agent .message-bubble,
+.agent-bubble {
   background: #ffffff;
   color: #1f2937;
   border: 1px solid #e5e7eb;
+  border-bottom-right-radius: 4px;
+}
+
+/* Customer bubble - same as user */
+.message.customer .message-bubble {
+  background: #d4f8d4;
+  color: #1f2937;
+  border: none;
   border-bottom-left-radius: 4px;
 }
+
+/* Message time */
+.message-time {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 4px;
+  padding: 0 4px;
+}
+
+/* ============================================ */
+/* END MESSAGE STYLES */
+/* ============================================ */
 
 .typing-indicator {
   display: flex;
@@ -607,6 +646,9 @@ body {
   gap: 10px;
   background: #ffffff;
   transition: opacity 0.3s ease;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
 }
 
 .message-input-container.disabled {
