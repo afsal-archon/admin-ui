@@ -3,15 +3,21 @@
 =========================================================== */
 
 .sidebar-container {
-  width: 250px;
+  width: 220px;
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-between; /* top + bottom */
   font-family: "Inter", sans-serif;
   padding: 1.5rem 0;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.03);
+}
+
+/* group for header + main menu */
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
 }
 
 /* ---------- Header ---------- */
@@ -72,7 +78,7 @@
   font-size: 1.1rem;
 }
 
-/* ---------- Footer ---------- */
+/* ---------- Footer (Account + Logout bottom) ---------- */
 .sidebar-footer {
   border-top: 1px solid #f3f4f6;
   padding-top: 1rem;
@@ -99,19 +105,45 @@
   .sidebar-container {
     width: 100%;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
-  }
-  .sidebar-menu {
-    flex-direction: row;
-    padding: 0;
-  }
-  .menu-item {
     padding: 0.75rem 1rem;
   }
+
+  .sidebar-top {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .sidebar-header {
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .sidebar-menu {
+    flex-direction: row;
+    padding-top: 0;
+  }
+
+  .menu-item {
+    padding: 0.5rem 0.75rem;
+  }
+
   .menu-item.active::before {
     display: none;
+  }
+
+  .sidebar-footer {
+    flex-direction: row;
+    border-top: none;
+    gap: 0.75rem;
+    padding-top: 0;
+  }
+
+  .footer-item {
+    padding: 0.5rem 0.75rem;
   }
 }
