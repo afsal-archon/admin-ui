@@ -819,7 +819,7 @@ const centerTextPlugin = (value) => ({
 });
 
 export default function DashboardAgent() {
-  const BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+  const BASE_URL = import.meta.env.VITE_API_URL || "https://api.texef.com/api";
   const token = localStorage.getItem("agent_token");
 
   const [agent, setAgent] = useState({ name: "", status: "offline" });
