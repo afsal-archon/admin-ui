@@ -14,7 +14,7 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const BASE_URL = "http://127.0.0.1:8000/api"; // ✅ backend base path
+  const BASE_URL = "https://api.texef.com/api"; // ✅ backend base path
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
