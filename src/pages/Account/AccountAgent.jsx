@@ -7,7 +7,7 @@ export default function AccountPage() {
   const [error, setError] = useState("");
   const token = localStorage.getItem("agent_token");
 
-  const BASE_URL = "http://localhost:8000/api/auth/me";
+  const BASE_URL = "https://api.texef.com/api/auth/me";
 
   useEffect(() => {
     const fetchProfile = async () => {
