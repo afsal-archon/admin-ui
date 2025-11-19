@@ -3299,14 +3299,18 @@ const AgentConsole = () => {
     const tenantId = localStorage.getItem("tenant_id");
     const agentId = localStorage.getItem("agent_username");
     const token = localStorage.getItem("agent_token");
-    const socket_url = localStorage.getItem("socket_url");
+    const socketUrl = localStorage.getItem("socket_url");
+      console.log("📝 tenantId:", tenantId);
+  console.log("📝 agentId:", agentId);
+  console.log("📝 token exists?", !!token);
+  console.log("📝 socketUrl:", socketUrl);
     if (!tenantId || !agentId || !token||!socket) {
       console.warn("❌ Missing tenant_id or agent_id — please login again");
       return;
     }
 
     // const wsUrl = `wss://api.texef.com/ws/console?tenant_id=${tenantId}&agent_id=${agentId}&token=${encodeURIComponent(token)}`;
-    const wsUrl = `${socket_url}&token=${encodeURIComponent(token)}`;
+    const wsUrl = `${socketUrl}&token=${encodeURIComponent(token)}`;
     console.log("🔌 Connecting to Agent Console:", wsUrl);
 
     const ws = new WebSocket(wsUrl);
