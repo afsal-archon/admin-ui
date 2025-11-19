@@ -3304,7 +3304,7 @@ const AgentConsole = () => {
       return;
     }
 
-    const wsUrl = `ws://localhost:8000/ws/console?tenant_id=${tenantId}&agent_id=${agentId}&token=${encodeURIComponent(token)}`;
+    const wsUrl = `wss://api.texef.com/ws/console?tenant_id=${tenantId}&agent_id=${agentId}&token=${encodeURIComponent(token)}`;
     console.log("🔌 Connecting to Agent Console:", wsUrl);
 
     const ws = new WebSocket(wsUrl);
@@ -3426,7 +3426,7 @@ const AgentConsole = () => {
       setIsLoadingMessages(true);
       const token = localStorage.getItem("agent_token");
       const res = await fetch(
-        `http://localhost:8000/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
+        `https://api.texef.com/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await res.json();
