@@ -3304,7 +3304,7 @@ const AgentConsole = () => {
   // console.log("📝 agentId:", agentId);
   // console.log("📝 token exists?", !!token);
   // console.log("📝 socketUrl:", socketUrl);
-    if (!tenantId || !agentId || !token||) {
+    if (!tenantId || !agentId || !token) {
       console.warn("❌ Missing tenant_id or agent_id — please login again");
       return;
     }
