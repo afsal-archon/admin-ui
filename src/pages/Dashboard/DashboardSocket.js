@@ -1,6 +1,6 @@
 export function initDashboardSocket(onData) {
   const tenantId = localStorage.getItem("tenant_id") || "demo_tenant";
-  const wsUrl = `ws://localhost:8000/ws/dashboard?tenant_id=${tenantId}`;
+  const wsUrl = `wss://api.texef.com/ws/dashboard?tenant_id=${tenantId}`;
   const socket = new WebSocket(wsUrl);
 
   socket.onmessage = (event) => {
