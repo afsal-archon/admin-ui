@@ -3330,16 +3330,32 @@ const AgentConsole = () => {
   console.log("📩 Console event:", data);
 
   // ✅ Snapshot handling — normalize data so conversation_id always exists
-  if (data.type === "snapshot" && Array.isArray(data.conversations)) {
-    const formatted = data.conversations.map((c) => ({
-      id: c.id,
-      conversation_id: c.conversation_id || c.id, // ✅ fallback
-      channel: c.channel || "unknown",
-      status: c.status || "active",
-      sentiment: c.sentiment || "neutral",
-    }));
-    setChats(formatted);
-  }
+  // if (data.type === "snapshot" && Array.isArray(data.conversations)) {
+  //   const formatted = data.conversations.map((c) => ({
+  //     id: c.id,
+  //     conversation_id: c.conversation_id || c.id, // ✅ fallback
+  //     channel: c.channel || "unknown",
+  //     status: c.status || "active",
+  //     sentiment: c.sentiment || "neutral",
+  //   }));
+  //   setChats(formatted);
+  // }
+      if (data.type === "snapshot") {
+  console.log("🔥 SNAPSHOT:", data.conversations);
+
+  const normalized = data.conversations.map((c) => ({
+    id: c.id || c.chat_id || c.conversationId || "unknown",
+    conversation_id: c.conversation_id || c.id || c.chat_id || c.conversationId,
+    channel: c.channel || c.channel_type || "unknown",
+    status: c.status || c.chat_status || "active",
+    sentiment: c.sentiment || "neutral",
+  }));
+
+  console.log("📌 Normalized:", normalized);
+
+  setChats(normalized);
+}
+
 
   // ✅ New conversation — same fallback logic
   else if (data.type === "new_conversation" && data.conversation) {
