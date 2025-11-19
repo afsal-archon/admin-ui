@@ -5307,7 +5307,7 @@ const AgentConsole = () => {
 
     try {
       const res = await fetch(
-        `https://api.texef.com/api/agent/conversations/${conversationId}/close`,
+        `https://api.texef.com/api/agents/conversations/${conversationId}/close`,
         {
           method: "POST",
           headers: {
