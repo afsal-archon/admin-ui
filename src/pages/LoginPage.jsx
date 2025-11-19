@@ -396,7 +396,7 @@ export default function LoginPage() {
           localStorage.setItem("agent_username", form.username);
           localStorage.setItem("tenant_id", data.tenant_id || "");
           localStorage.setItem("user_type", "agent");
-          localStorage.setItem("socket_url",data.socket_url);
+          localStorage.setItem("agent_id",data.agent_id);
           console.log("💾 Agent token stored:", data.access_token);
         } else {
           localStorage.setItem("auth_token", data.access_token);
