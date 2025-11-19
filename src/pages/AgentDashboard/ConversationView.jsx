@@ -5001,7 +5001,7 @@ const ChatWindow = ({
         </div>
       </div>
 
-      <div className="messages-container">
+      {/* <div className="messages-container">
         {isLoadingMessages ? (
           <div className="empty-state">Loading messages...</div>
         ) : messages.length === 0 ? (
@@ -5029,7 +5029,49 @@ const ChatWindow = ({
           })
         )}
         <div ref={messagesEndRef} />
-      </div>
+      </div> */}
+      <div className="messages-container">
+  {isLoadingMessages ? (
+    <div className="empty-state">Loading messages...</div>
+  ) : messages.length === 0 ? (
+    <div className="empty-state">No messages yet.</div>
+  ) : (
+    messages.map((msg) => {
+      const fromAgent = msg.sender === "agent";
+      const fromBot = msg.sender === "bot" || msg.sender === "ai";
+      const fromUser = !fromAgent && !fromBot; // rest treated as end-user
+
+      let messageClass = "";
+      let bubbleClass = "";
+
+      if (fromAgent) {
+        messageClass = "agent";
+        bubbleClass = "agent-bubble";
+      } else if (fromBot) {
+        messageClass = "bot";
+        bubbleClass = "bot-bubble";
+      } else {
+        messageClass = "user";
+        bubbleClass = "user-bubble";
+      }
+
+      return (
+        <div key={msg.id} className={`message ${messageClass}`}>
+          <div className={`message-bubble ${bubbleClass}`}>
+            {msg.text}
+          </div>
+          <div className="message-time">
+            {msg.timestamp
+              ? new Date(msg.timestamp).toLocaleTimeString()
+              : ""}
+          </div>
+        </div>
+      );
+    })
+  )}
+  <div ref={messagesEndRef} />
+</div>
+
 
       <div
         className={`message-input-container ${
