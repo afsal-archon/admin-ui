@@ -244,7 +244,7 @@ export default function Sidebar() {
   const [loading, setLoading] = useState(false);
 
   const BASE_URL =
-    import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+    import.meta.env.VITE_API_URL || "https://api.texef.com/api";
   const TOKEN = localStorage.getItem("auth_token");
 
   const menuItems = [
