@@ -4841,12 +4841,6 @@
 
 // new updated 
 
-
-
-
-
-
-
 import React, { useState, useEffect, useRef } from "react";
 import "../../styles/conversation.css";
 
@@ -4879,7 +4873,9 @@ const ChatList = ({ chats, activeChat, pausedChats, closedChats, handleChatClick
           filteredChats.map((chat) => {
             const isPaused = pausedChats.has(chat.id);
             const isActive = activeChat?.id === chat.id;
-            const isClosed = closedChats.has(chat.conversation_id);
+
+            const isClosed =
+              chat.status === "resolved" || closedChats.has(chat.conversation_id);
 
             return (
               <div
@@ -5097,7 +5093,7 @@ const AgentConsole = () => {
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
 
   /* ===================================================
-     🚀 NEW: Fetch Agent Inbox (my_active)
+     🚀 Fetch Agent Inbox (my_active)
      =================================================== */
   useEffect(() => {
     const fetchInbox = async () => {
@@ -5117,19 +5113,17 @@ const AgentConsole = () => {
 
         if (Array.isArray(data.conversations)) {
           const formatted = data.conversations.map((c) => ({
-            id: String(c.id), // show only ID
+            id: String(c.id),
             conversation_id: c.id,
             channel: c.channel || "inbox",
-            status: c.status || "active",
+            status: c.status || "active", // could be "resolved" too
           }));
 
           setChats((prev) => {
             const merged = new Map();
-
             [...prev, ...formatted].forEach((c) => {
               merged.set(c.id, c);
             });
-
             return Array.from(merged.values());
           });
         }
@@ -5181,11 +5175,9 @@ const AgentConsole = () => {
 
         setChats((prev) => {
           const map = new Map();
-
           [...prev, ...normalized].forEach((x) => {
             map.set(x.id, x);
           });
-
           return Array.from(map.values());
         });
       } else if (data.type === "new_conversation") {
@@ -5201,6 +5193,7 @@ const AgentConsole = () => {
       } else if (data.type === "message") {
         handleMessage(data);
       } else if (data.type === "conversation_closed") {
+        // optional WS event if backend sends this
         handleConversationClosed(data.conversation_id);
       }
     };
@@ -5242,7 +5235,7 @@ const AgentConsole = () => {
     // mark in chats list
     setChats((prev) =>
       prev.map((c) =>
-        c.conversation_id === conversationId ? { ...c, status: "closed" } : c
+        c.conversation_id === conversationId ? { ...c, status: "resolved" } : c
       )
     );
 
@@ -5256,7 +5249,7 @@ const AgentConsole = () => {
     // update activeChat status if same chat
     setActiveChat((prev) =>
       prev && prev.conversation_id === conversationId
-        ? { ...prev, status: "closed" }
+        ? { ...prev, status: "resolved" }
         : prev
     );
   };
@@ -5307,22 +5300,80 @@ const AgentConsole = () => {
     });
   };
 
-  /* ---------- CLOSE ---------- */
-  const handleCloseChat = (conversationId) => {
-    if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) return;
+  /* ---------- CLOSE (RESOLVE) ---------- */
+  const handleCloseChat = async (conversationId) => {
+    const token = localStorage.getItem("agent_token");
+    if (!token) return;
 
-    // notify backend
-    consoleSocket.send(
-      JSON.stringify({ type: "close_conversation", conversation_id: conversationId })
-    );
+    try {
+      const res = await fetch(
+        `https://api.texef.com/api/agent/conversations/${conversationId}/close`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            resolution: "issue_resolved",
+            notes: "Closed from agent console",
+            satisfaction_rating: 5,
+          }),
+        }
+      );
 
-    // locally mark closed immediately
-    handleConversationClosed(conversationId);
+      const data = await res.json();
+      console.log("🔒 Close response:", data);
+
+      if (!res.ok) {
+        console.error("❌ Close failed:", data);
+        return;
+      }
+
+      // update based on backend status (resolved)
+      const status = data.status || "resolved";
+      const convId = data.conversation_id || conversationId;
+
+      setChats((prev) =>
+        prev.map((c) =>
+          c.conversation_id === convId ? { ...c, status } : c
+        )
+      );
+
+      setClosedChats((prev) => {
+        const s = new Set(prev);
+        s.add(convId);
+        return s;
+      });
+
+      setActiveChat((prev) =>
+        prev && prev.conversation_id === convId
+          ? { ...prev, status }
+          : prev
+      );
+
+      // optional: notify via WebSocket
+      if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
+        consoleSocket.send(
+          JSON.stringify({
+            type: "conversation_closed",
+            conversation_id: convId,
+          })
+        );
+      }
+    } catch (err) {
+      console.error("⚠️ Close conversation error:", err);
+    }
   };
 
   const activeChatMessages = activeChat
     ? messages[activeChat.conversation_id] || []
     : [];
+
+  const isActiveChatClosed =
+    activeChat &&
+    (activeChat.status === "resolved" ||
+      closedChats.has(activeChat.conversation_id));
 
   return (
     <div className="app">
@@ -5338,7 +5389,7 @@ const AgentConsole = () => {
         isTyping={false}
         onCloseChat={handleCloseChat}
         isPaused={activeChat ? pausedChats.has(activeChat.id) : false}
-        isClosed={activeChat ? closedChats.has(activeChat.conversation_id) : false}
+        isClosed={!!isActiveChatClosed}
         onTogglePause={(id) =>
           setPausedChats((prev) => {
             const s = new Set(prev);
@@ -5358,4 +5409,8 @@ const AgentConsole = () => {
 };
 
 export default AgentConsole;
+
+
+
+
 
