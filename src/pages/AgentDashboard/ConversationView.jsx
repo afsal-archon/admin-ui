@@ -3300,7 +3300,7 @@ const AgentConsole = () => {
     const agentId = localStorage.getItem("agent_username");
     const token = localStorage.getItem("agent_token");
     const socket = localStorage.getItem("socket_url");
-    if (!tenantId || !agentId || !token||!socket_url) {
+    if (!tenantId || !agentId || !token||!socket) {
       console.warn("❌ Missing tenant_id or agent_id — please login again");
       return;
     }
