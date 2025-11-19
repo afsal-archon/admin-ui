@@ -4927,19 +4927,16 @@ const ChatWindow = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  const handleSend = () => {
-    const disabled =
-      isPaused || isClosed || consoleSocketStatus !== "connected";
+  const disabled =
+    isPaused || isClosed || consoleSocketStatus !== "connected";
 
+  const handleSend = () => {
     if (!message.trim() || disabled) return;
     onSendMessage(message);
     setMessage("");
   };
 
   const handleKeyPress = (e) => {
-    const disabled =
-      isPaused || isClosed || consoleSocketStatus !== "connected";
-
     if (e.key === "Enter" && !e.shiftKey && !disabled) {
       e.preventDefault();
       handleSend();
@@ -4952,9 +4949,6 @@ const ChatWindow = ({
         <p>Select a chat to start messaging</p>
       </div>
     );
-
-  const disabled =
-    isPaused || isClosed || consoleSocketStatus !== "connected";
 
   const statusClass = isClosed
     ? "closed"
@@ -5149,8 +5143,8 @@ const AgentConsole = () => {
 
   /* ---------- Console WebSocket ---------- */
   useEffect(() => {
-    if ((window as any).__consoleSocketInitialized) return;
-    (window as any).__consoleSocketInitialized = true;
+    if (window.__consoleSocketInitialized) return;
+    window.__consoleSocketInitialized = true;
 
     const tenantId = localStorage.getItem("tenant_id");
     const agentId = localStorage.getItem("agent_id");
@@ -5244,7 +5238,7 @@ const AgentConsole = () => {
     }));
   };
 
-  const handleConversationClosed = (conversationId: string) => {
+  const handleConversationClosed = (conversationId) => {
     // mark in chats list
     setChats((prev) =>
       prev.map((c) =>
@@ -5298,7 +5292,7 @@ const AgentConsole = () => {
   };
 
   /* ---------- SEND ---------- */
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = (text) => {
     if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) return;
     if (!activeChat) return;
 
@@ -5314,7 +5308,7 @@ const AgentConsole = () => {
   };
 
   /* ---------- CLOSE ---------- */
-  const handleCloseChat = (conversationId: string) => {
+  const handleCloseChat = (conversationId) => {
     if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) return;
 
     // notify backend
@@ -5348,7 +5342,8 @@ const AgentConsole = () => {
         onTogglePause={(id) =>
           setPausedChats((prev) => {
             const s = new Set(prev);
-            s.has(id) ? s.delete(id) : s.add(id);
+            if (s.has(id)) s.delete(id);
+            else s.add(id);
             return s;
           })
         }
@@ -5363,3 +5358,4 @@ const AgentConsole = () => {
 };
 
 export default AgentConsole;
+
