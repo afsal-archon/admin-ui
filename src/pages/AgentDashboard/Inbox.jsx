@@ -538,7 +538,7 @@ export default function Inbox() {
 
   const BASE_URL =
     import.meta.env.VITE_API_URL ||
-    "http://localhost:8000/api/agents/conversations/inbox";
+   "https://api.texef.com/api/agents/conversations/inbox";
 
   const token = localStorage.getItem("agent_token");
 
