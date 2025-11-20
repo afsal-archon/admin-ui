@@ -6266,7 +6266,6 @@
 
 
 
-
 import React, { useState, useEffect, useRef } from "react";
 import "../../styles/conversation.css";
 
@@ -6299,7 +6298,6 @@ const ChatList = ({ chats, activeChat, pausedChats, closedChats, handleChatClick
           filteredChats.map((chat) => {
             const isPaused = pausedChats.has(chat.id);
             const isActive = activeChat?.id === chat.id;
-
             const isClosed =
               chat.status === "resolved" || closedChats.has(chat.conversation_id);
 
@@ -6554,7 +6552,7 @@ const AgentConsole = () => {
             id: String(c.id),
             conversation_id: c.id,
             channel: c.channel || "inbox",
-            status: c.status || "active", // could be "resolved" too
+            status: c.status || "active",
           }));
 
           setChats((prev) => {
@@ -6678,14 +6676,14 @@ const AgentConsole = () => {
     setMessages((prev) => {
       const current = prev[convId] || [];
 
-      // 1️⃣ id ഉണ്ടെങ്കിൽ: same id already ഉണ്ടെങ്കിൽ skip
+      // 1️⃣ same id already present → skip
       if (msgId && current.some((m) => m.id === msgId)) {
         return prev;
       }
 
-      // 2️⃣ id ഇല്ലെങ്കിൽ: sender+text+timestamp ഒരേ ആയാൽ skip
-      const key = `${sender}|${text}|${ts}`;
-      if (current.some((m) => `${m.sender}|${m.text}|${m.timestamp}` === key)) {
+      // 2️⃣ same text + timestamp already present (ignore sender) → skip
+      const key = `${text}|${ts}`;
+      if (current.some((m) => `${m.text}|${m.timestamp}` === key)) {
         return prev;
       }
 
@@ -6735,7 +6733,7 @@ const AgentConsole = () => {
       );
       const data = await res.json();
 
-      // ✅ Normalize + dedupe history
+      // ✅ Normalize + dedupe history (by text + timestamp)
       const seen = new Set();
       const normalized = Array.isArray(data)
         ? data
@@ -6756,7 +6754,7 @@ const AgentConsole = () => {
 
               if (!text) return null;
 
-              const key = `${id}|${sender}|${text}|${ts}`;
+              const key = `${text}|${ts}`;
               if (seen.has(key)) return null;
               seen.add(key);
 
@@ -6789,7 +6787,7 @@ const AgentConsole = () => {
     const msg = { conversation_id: activeChat.conversation_id, text };
     consoleSocket.send(JSON.stringify(msg));
 
-    // ❌ local-ൽ add വേണ്ട → backend echo ചെയ്യുന്ന 'message' event മാത്രം handleMessage വഴി add ചെയ്യും
+    // no local add; backend echo "message" event will add via handleMessage
   };
 
   /* ---------- CLOSE (WebSocket only) ---------- */
@@ -6855,6 +6853,7 @@ const AgentConsole = () => {
 };
 
 export default AgentConsole;
+
 
 
 
