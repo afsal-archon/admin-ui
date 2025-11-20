@@ -5976,7 +5976,7 @@ const handleMessage = (data) => {
   //   }
   // };
 
-  const handleChatClick = async (chat) => {
+const handleChatClick = async (chat) => {
   setActiveChat(chat);
 
   if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
@@ -5994,9 +5994,41 @@ const handleMessage = (data) => {
     );
     const data = await res.json();
 
+    // ✅ Normalize + dedupe history
+    const seen = new Set<string>();
+    const normalized = Array.isArray(data)
+      ? data
+          .map((m) => {
+            const id =
+              m.id ||
+              m.message_id ||
+              m.msg_id ||
+              `msg_${m.created_at || m.timestamp || m.text}`;
+
+            const sender = m.sender || m.role || "user";
+            const text = (m.text || m.message || m.reply || "").trim();
+            const ts =
+              m.timestamp || m.created_at || m.sent_at || new Date().toISOString();
+
+            if (!text) return null;
+
+            const key = `${id}|${sender}|${text}|${ts}`;
+            if (seen.has(key)) return null;
+            seen.add(key);
+
+            return {
+              id,
+              sender,
+              text,
+              timestamp: ts,
+            };
+          })
+          .filter(Boolean)
+      : [];
+
     setMessages((prev) => ({
       ...prev,
-      [chat.conversation_id]: data,
+      [chat.conversation_id]: normalized,
     }));
   } catch (err) {
     console.error("⚠️ Fetch messages error:", err);
@@ -6004,6 +6036,7 @@ const handleMessage = (data) => {
     setIsLoadingMessages(false);
   }
 };
+
 
 
   /* ---------- SEND ---------- */
