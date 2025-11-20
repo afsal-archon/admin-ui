@@ -6028,7 +6028,69 @@ const AgentConsole = () => {
   //   }
   // };
 
-const handleChatClick = async (chat) => {
+// const handleChatClick = async (chat) => {
+//   setActiveChat(chat);
+
+//   if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
+//     consoleSocket.send(
+//       JSON.stringify({ type: "join", conversation_id: chat.conversation_id })
+//     );
+//   }
+
+//   try {
+//     setIsLoadingMessages(true);
+//     const token = localStorage.getItem("agent_token");
+//     const res = await fetch(
+//       `https://api.texef.com/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
+//       { headers: { Authorization: `Bearer ${token}` } }
+//     );
+//     const data = await res.json();
+
+//    const seen = new Set();
+// const normalized = Array.isArray(data)
+//   ? data
+//       .map((m) => {
+//         const id =
+//           m.id ||
+//           m.message_id ||
+//           m.msg_id ||
+//           `msg_${m.created_at || m.timestamp || m.text}`;
+
+//         const sender = m.sender || m.role || "user";
+//         const text = (m.text || m.message || m.reply || "").trim();
+//         const ts =
+//           m.timestamp || m.created_at || m.sent_at || new Date().toISOString();
+
+//         if (!text) return null;
+
+//         const key = `${id}|${sender}|${text}|${ts}`;
+//         if (seen.has(key)) return null;
+//         seen.add(key);
+
+//         return {
+//           id,
+//           sender,
+//           text,
+//           timestamp: ts,
+//         };
+//       })
+//       .filter(Boolean)
+//   : [];
+
+
+//     setMessages((prev) => ({
+//       ...prev,
+//       [chat.conversation_id]: normalized,
+//     }));
+//   } catch (err) {
+//     console.error("⚠️ Fetch messages error:", err);
+//   } finally {
+//     setIsLoadingMessages(false);
+//   }
+// };
+
+
+  const handleChatClick = async (chat) => {
   setActiveChat(chat);
 
   if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
@@ -6046,37 +6108,38 @@ const handleChatClick = async (chat) => {
     );
     const data = await res.json();
 
-   const seen = new Set();
-const normalized = Array.isArray(data)
-  ? data
-      .map((m) => {
-        const id =
-          m.id ||
-          m.message_id ||
-          m.msg_id ||
-          `msg_${m.created_at || m.timestamp || m.text}`;
+    // ✅ Normalize + dedupe history
+    const seen = new Set();  // 👈 ഇവിടെ define cheyyണം
 
-        const sender = m.sender || m.role || "user";
-        const text = (m.text || m.message || m.reply || "").trim();
-        const ts =
-          m.timestamp || m.created_at || m.sent_at || new Date().toISOString();
+    const normalized = Array.isArray(data)
+      ? data
+          .map((m) => {
+            const id =
+              m.id ||
+              m.message_id ||
+              m.msg_id ||
+              `msg_${m.created_at || m.timestamp || m.text}`;
 
-        if (!text) return null;
+            const sender = m.sender || m.role || "user";
+            const text = (m.text || m.message || m.reply || "").trim();
+            const ts =
+              m.timestamp || m.created_at || m.sent_at || new Date().toISOString();
 
-        const key = `${id}|${sender}|${text}|${ts}`;
-        if (seen.has(key)) return null;
-        seen.add(key);
+            if (!text) return null;
 
-        return {
-          id,
-          sender,
-          text,
-          timestamp: ts,
-        };
-      })
-      .filter(Boolean)
-  : [];
+            const key = `${id}|${sender}|${text}|${ts}`;
+            if (seen.has(key)) return null;
+            seen.add(key);
 
+            return {
+              id,
+              sender,
+              text,
+              timestamp: ts,
+            };
+          })
+          .filter(Boolean)
+      : [];
 
     setMessages((prev) => ({
       ...prev,
@@ -6088,6 +6151,7 @@ const normalized = Array.isArray(data)
     setIsLoadingMessages(false);
   }
 };
+
 
 
 
