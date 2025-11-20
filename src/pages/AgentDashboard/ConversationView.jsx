@@ -6646,53 +6646,122 @@ const AgentConsole = () => {
   }, []);
 
   /* ---------- Helpers ---------- */
-  const handleMessage = (data) => {
-    const convId = data.conversation_id || activeChat?.conversation_id;
-    if (!convId) return;
+  // const handleMessage = (data) => {
+  //   const convId = data.conversation_id || activeChat?.conversation_id;
+  //   if (!convId) return;
 
-    const msgId =
-      data.id ||
-      data.message_id ||
-      data.msg_id ||
-      null;
+  //   const msgId =
+  //     data.id ||
+  //     data.message_id ||
+  //     data.msg_id ||
+  //     null;
 
-    const ts =
-      data.timestamp ||
-      data.created_at ||
-      data.sent_at ||
-      new Date().toISOString();
+  //   const ts =
+  //     data.timestamp ||
+  //     data.created_at ||
+  //     data.sent_at ||
+  //     new Date().toISOString();
 
-    const sender = data.sender;
-    const text = (data.text || "").trim();
-    if (!text) return;
+  //   const sender = data.sender;
+  //   const text = (data.text || "").trim();
+  //   if (!text) return;
 
-    const newMsg = {
-      id: msgId || `msg_${ts}_${sender}_${text}`,
-      sender,
-      text,
-      timestamp: ts,
-    };
+  //   const newMsg = {
+  //     id: msgId || `msg_${ts}_${sender}_${text}`,
+  //     sender,
+  //     text,
+  //     timestamp: ts,
+  //   };
 
-    setMessages((prev) => {
-      const current = prev[convId] || [];
+  //   setMessages((prev) => {
+  //     const current = prev[convId] || [];
 
-      // 1️⃣ same id already present → skip
-      if (msgId && current.some((m) => m.id === msgId)) {
-        return prev;
-      }
+  //     // 1️⃣ same id already present → skip
+  //     if (msgId && current.some((m) => m.id === msgId)) {
+  //       return prev;
+  //     }
 
-      // 2️⃣ same text + timestamp already present (ignore sender) → skip
-      const key = `${text}|${ts}`;
-      if (current.some((m) => `${m.text}|${m.timestamp}` === key)) {
-        return prev;
-      }
+  //     // 2️⃣ same text + timestamp already present (ignore sender) → skip
+  //     const key = `${text}|${ts}`;
+  //     if (current.some((m) => `${m.text}|${m.timestamp}` === key)) {
+  //       return prev;
+  //     }
 
-      return {
-        ...prev,
-        [convId]: [...current, newMsg],
-      };
-    });
+  //     return {
+  //       ...prev,
+  //       [convId]: [...current, newMsg],
+  //     };
+  //   });
+  // };
+
+
+const handleMessage = (data) => {
+  const convId = data.conversation_id || activeChat?.conversation_id;
+  if (!convId) return;
+
+  const msgId =
+    data.id ||
+    data.message_id ||
+    data.msg_id ||
+    null;
+
+  const ts =
+    data.timestamp ||
+    data.created_at ||
+    data.sent_at ||
+    new Date().toISOString();
+
+  const sender = data.sender; // "user" | "agent" | "bot" | ...
+  const text = (data.text || "").trim();
+  if (!text) return;
+
+  const newMsg = {
+    id: msgId || `msg_${ts}_${sender}_${text}`,
+    sender,
+    text,
+    timestamp: ts,
   };
+
+  setMessages((prev) => {
+    const current = prev[convId] || [];
+
+    // 1️⃣ same id already present → skip
+    if (msgId && current.some((m) => m.id === msgId)) {
+      return prev;
+    }
+
+    // 2️⃣ same text + timestamp present (ignore sender) → skip
+    const key = `${text}|${ts}`;
+    if (current.some((m) => `${m.text}|${m.timestamp}` === key)) {
+      return prev;
+    }
+
+    // 3️⃣ SPECIAL RULE:
+    //    If last message was from user, and this one is from agent/bot,
+    //    and text is the same, and time difference < 5 seconds → skip
+    const last = current[current.length - 1];
+    if (
+      last &&
+      last.text === text &&
+      last.sender === "user" &&
+      (sender === "agent" || sender === "bot")
+    ) {
+      // ആയിരിക്കും backend user message വീണ്ടും echo ചെയ്തത് → കാണിക്കണ്ട
+      const lastTime = new Date(last.timestamp).getTime();
+      const thisTime = new Date(ts).getTime();
+      if (!isNaN(lastTime) && Math.abs(thisTime - lastTime) < 5000) {
+        return prev;
+      }
+    }
+
+    // 4️⃣ otherwise, keep it
+    return {
+      ...prev,
+      [convId]: [...current, newMsg],
+    };
+  });
+};
+
 
   const handleConversationClosed = (conversationId) => {
     setChats((prev) =>
