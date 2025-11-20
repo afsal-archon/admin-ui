@@ -106,7 +106,6 @@
 
 
 
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Key, MessageSquare } from "lucide-react";
@@ -114,7 +113,7 @@ import "./PromptPage.css";
 
 export default function PromptPage() {
   const [apiKey, setApiKey] = useState("");
-  const [prompt, setPrompt] = useState(""); // custom prompt text
+  const [prompt, setPrompt] = useState("");
   const [useCustomPrompt, setUseCustomPrompt] = useState(false); // 👈 NEW
   const [modelName, setModelName] = useState("gpt-4o-mini");
   const [temperature, setTemperature] = useState(0.7);
@@ -123,9 +122,9 @@ export default function PromptPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const validateKey = (key: string) => key.startsWith("sk-");
+  const validateKey = (key) => key.startsWith("sk-"); // ✅ no : string
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!apiKey) {
@@ -150,14 +149,14 @@ export default function PromptPage() {
     }
 
     // Common payload
-    const payload: any = {
+    const payload = {
       openai_api_key: apiKey,
       model_name: modelName,
       temperature: Number(temperature),
       max_tokens: Number(maxTokens),
     };
 
-    // Only send base_prompt when user explicitly enabled it
+    // Only send base_prompt when overriding
     if (useCustomPrompt) {
       payload.base_prompt = prompt;
     }
@@ -320,4 +319,3 @@ export default function PromptPage() {
     </div>
   );
 }
-
