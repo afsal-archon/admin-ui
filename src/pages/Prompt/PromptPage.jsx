@@ -114,7 +114,8 @@ import "./PromptPage.css";
 
 export default function PromptPage() {
   const [apiKey, setApiKey] = useState("");
-  const [prompt, setPrompt] = useState("");          // 👈 no default prompt
+  const [prompt, setPrompt] = useState(""); // custom prompt text
+  const [useCustomPrompt, setUseCustomPrompt] = useState(false); // 👈 NEW
   const [modelName, setModelName] = useState("gpt-4o-mini");
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(500);
@@ -122,13 +123,18 @@ export default function PromptPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const validateKey = (key) => key.startsWith("sk-");
+  const validateKey = (key: string) => key.startsWith("sk-");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!apiKey || !prompt) {
-      alert("Please enter your OpenAI key and a base prompt first!");
+    if (!apiKey) {
+      alert("Please enter your OpenAI key first!");
+      return;
+    }
+
+    if (useCustomPrompt && !prompt.trim()) {
+      alert("Please type your base system prompt or uncheck the prompt option.");
       return;
     }
 
@@ -143,6 +149,19 @@ export default function PromptPage() {
       return;
     }
 
+    // Common payload
+    const payload: any = {
+      openai_api_key: apiKey,
+      model_name: modelName,
+      temperature: Number(temperature),
+      max_tokens: Number(maxTokens),
+    };
+
+    // Only send base_prompt when user explicitly enabled it
+    if (useCustomPrompt) {
+      payload.base_prompt = prompt;
+    }
+
     setLoading(true);
     try {
       // Try CREATE first
@@ -152,38 +171,31 @@ export default function PromptPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${tenantAdminToken}`,
         },
-        body: JSON.stringify({
-          openai_api_key: apiKey,
-          base_prompt: prompt,
-          model_name: modelName,
-          temperature: Number(temperature),
-          max_tokens: Number(maxTokens),
-        }),
+        body: JSON.stringify(payload),
       });
 
       // If POST fails, fallback to UPDATE
       if (!res.ok) {
-        console.warn("POST /api/ai-config failed, trying PUT instead…", res.status);
+        console.warn(
+          "POST /api/ai-config failed, trying PUT instead…",
+          res.status
+        );
         res = await fetch("/api/ai-config", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${tenantAdminToken}`,
           },
-          body: JSON.stringify({
-            openai_api_key: apiKey,
-            base_prompt: prompt,
-            model_name: modelName,
-            temperature: Number(temperature),
-            max_tokens: Number(maxTokens),
-          }),
+          body: JSON.stringify(payload),
         });
       }
 
       if (!res.ok) {
         const errText = await res.text();
         console.error("AI config error:", res.status, errText);
-        alert("❌ Failed to save AI configuration. Please check your key and try again.");
+        alert(
+          "❌ Failed to save AI configuration. Please check your settings and try again."
+        );
         return;
       }
 
@@ -231,16 +243,32 @@ export default function PromptPage() {
             />
           </div>
 
-          {/* Base Prompt */}
-          <label className="input-label">
-            <MessageSquare size={18} className="label-icon" /> Base System Prompt
-          </label>
+          {/* Base Prompt toggle + field */}
+          <div className="label-with-checkbox">
+            <label className="input-label">
+              <MessageSquare size={18} className="label-icon" /> Base System Prompt
+            </label>
+            <label className="checkbox-inline">
+              <input
+                type="checkbox"
+                checked={useCustomPrompt}
+                onChange={(e) => setUseCustomPrompt(e.target.checked)}
+              />
+              <span>Override default prompt</span>
+            </label>
+          </div>
+
           <textarea
             rows={6}
-            placeholder="Type your base system prompt here..."
+            placeholder={
+              useCustomPrompt
+                ? "Type your base system prompt here..."
+                : "Using existing / default base prompt (enable override to edit)."
+            }
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             className="textarea-field"
+            disabled={!useCustomPrompt}
           />
 
           {/* Model + Advanced settings */}
