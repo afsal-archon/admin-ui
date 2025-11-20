@@ -134,7 +134,7 @@ export default function PromptPage() {
       return;
     }
 
-    const tenantAdminToken = localStorage.getItem("tenant_admin_token");
+    const tenantAdminToken = localStorage.getItem("auth_token");
     if (!tenantAdminToken) {
       alert("❌ Missing tenant admin token. Please login again.");
       return;
