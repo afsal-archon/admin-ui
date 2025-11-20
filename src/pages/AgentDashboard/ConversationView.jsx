@@ -5920,20 +5920,31 @@ const AgentConsole = () => {
   };
 
   /* ---------- SEND ---------- */
+  // const handleSendMessage = (text) => {
+  //   if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) return;
+  //   if (!activeChat) return;
+
+  //   const msg = { conversation_id: activeChat.conversation_id, text };
+  //   consoleSocket.send(JSON.stringify(msg));
+
   const handleSendMessage = (text) => {
-    if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) return;
-    if (!activeChat) return;
+  if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) return;
+  if (!activeChat) return;
 
-    const msg = { conversation_id: activeChat.conversation_id, text };
-    consoleSocket.send(JSON.stringify(msg));
+  const msg = { conversation_id: activeChat.conversation_id, text };
+  consoleSocket.send(JSON.stringify(msg));
 
-    handleMessage({
-      conversation_id: activeChat.conversation_id,
-      sender: "agent",
-      text,
-      timestamp: new Date().toISOString(),
-    });
-  };
+  // 🔥 ഇനി local-ൽ add cheyyേണ്ട: backend echo ചെയ്യുന്ന 'message' event-ിൽ handleMessage വഴി add ചെയ്യും
+};
+
+
+  //   handleMessage({
+  //     conversation_id: activeChat.conversation_id,
+  //     sender: "agent",
+  //     text,
+  //     timestamp: new Date().toISOString(),
+  //   });
+  // };
 
   /* ---------- CLOSE (WebSocket only) ---------- */
   const handleCloseChat = (conversationId) => {
