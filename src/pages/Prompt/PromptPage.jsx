@@ -105,6 +105,8 @@
 // }
 
 
+
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Key, MessageSquare } from "lucide-react";
@@ -113,7 +115,6 @@ import "./PromptPage.css";
 export default function PromptPage() {
   const [apiKey, setApiKey] = useState("");
   const [prompt, setPrompt] = useState("");
-  const [useCustomPrompt, setUseCustomPrompt] = useState(false);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -128,11 +129,6 @@ export default function PromptPage() {
       return;
     }
 
-    if (useCustomPrompt && !prompt.trim()) {
-      alert("Please type your base system prompt or uncheck the prompt option.");
-      return;
-    }
-
     if (!validateKey(apiKey)) {
       alert("❌ Invalid OpenAI key format. It should start with 'sk-'.");
       return;
@@ -144,7 +140,7 @@ export default function PromptPage() {
       return;
     }
 
-    // Fixed default API parameters
+    // Fixed defaults
     const payload = {
       openai_api_key: apiKey,
       model_name: "gpt-4",
@@ -152,14 +148,13 @@ export default function PromptPage() {
       max_tokens: 1000,
     };
 
-    // Only override base_prompt when user explicitly enabled it
-    if (useCustomPrompt) {
-      payload.base_prompt = prompt;
+    // Only send base_prompt if user typed something
+    if (prompt.trim()) {
+      payload.base_prompt = prompt.trim();
     }
 
     setLoading(true);
     try {
-      // Try CREATE first
       let res = await fetch("/api/ai-config", {
         method: "POST",
         headers: {
@@ -169,7 +164,6 @@ export default function PromptPage() {
         body: JSON.stringify(payload),
       });
 
-      // If POST fails, fallback to UPDATE
       if (!res.ok) {
         console.warn(
           "POST /api/ai-config failed, trying PUT instead…",
@@ -188,9 +182,7 @@ export default function PromptPage() {
       if (!res.ok) {
         const errText = await res.text();
         console.error("AI config error:", res.status, errText);
-        alert(
-          "❌ Failed to save AI configuration. Please check your settings and try again."
-        );
+        alert("❌ Failed to save AI configuration. Please try again.");
         return;
       }
 
@@ -219,12 +211,10 @@ export default function PromptPage() {
 
       <div className="prompt-container">
         <h1 className="prompt-title">AI Configuration</h1>
-        <p className="prompt-subtitle">
-          Store your OpenAI API key and optional base system prompt for this tenant.
-        </p>
+        {/* subtitle removed */}
 
         <form onSubmit={handleSubmit} className="prompt-form">
-          {/* API Key */}
+          {/* OpenAI API Key */}
           <label className="input-label">
             <Key size={18} className="label-icon" /> OpenAI API Key
           </label>
@@ -238,35 +228,17 @@ export default function PromptPage() {
             />
           </div>
 
-          {/* Base Prompt toggle + field */}
-          <div className="label-with-checkbox">
-            <label className="input-label">
-              <MessageSquare size={18} className="label-icon" /> Base System Prompt
-            </label>
-            <label className="checkbox-inline">
-              <input
-                type="checkbox"
-                checked={useCustomPrompt}
-                onChange={(e) => setUseCustomPrompt(e.target.checked)}
-              />
-              <span>Override default prompt</span>
-            </label>
-          </div>
-
+          {/* Base System Prompt */}
+          <label className="input-label">
+            <MessageSquare size={18} className="label-icon" /> Base System Prompt
+          </label>
           <textarea
             rows={6}
-            placeholder={
-              useCustomPrompt
-                ? "Type your base system prompt here..."
-                : "Using existing / default base prompt (enable override to edit)."
-            }
+            placeholder="Type your base system prompt here (optional)..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             className="textarea-field"
-            disabled={!useCustomPrompt}
           />
-
-          {/* No model/temperature/maxTokens UI – they’re fixed in payload */}
 
           <button type="submit" className="submit-btn" disabled={loading}>
             {loading ? "Saving AI config..." : "Save AI Configuration"}
@@ -276,3 +248,4 @@ export default function PromptPage() {
     </div>
   );
 }
+
