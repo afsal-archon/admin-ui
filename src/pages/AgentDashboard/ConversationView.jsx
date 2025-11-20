@@ -5947,34 +5947,64 @@ const handleMessage = (data) => {
   };
 
   /* ---------- JOIN ---------- */
+  // const handleChatClick = async (chat) => {
+  //   setActiveChat(chat);
+
+  //   if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
+  //     consoleSocket.send(
+  //       JSON.stringify({ type: "join", conversation_id: chat.conversation_id })
+  //     );
+  //   }
+
+  //   try {
+  //     setIsLoadingMessages(true);
+  //     const token = localStorage.getItem("agent_token");
+  //     const res = await fetch(
+  //       `https://api.texef.com/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+  //     const data = await res.json();
+
+  //     setMessages((prev) => ({
+  //       ...prev,
+  //       [chat.conversation_id]: data,
+  //     }));
+  //   } catch (err) {
+  //     console.error("⚠️ Fetch messages error:", err);
+  //   } finally {
+  //     setIsLoadingMessages(false);
+  //   }
+  // };
+
   const handleChatClick = async (chat) => {
-    setActiveChat(chat);
+  setActiveChat(chat);
 
-    if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
-      consoleSocket.send(
-        JSON.stringify({ type: "join", conversation_id: chat.conversation_id })
-      );
-    }
+  if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
+    consoleSocket.send(
+      JSON.stringify({ type: "join", conversation_id: chat.conversation_id })
+    );
+  }
 
-    try {
-      setIsLoadingMessages(true);
-      const token = localStorage.getItem("agent_token");
-      const res = await fetch(
-        `https://api.texef.com/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const data = await res.json();
+  try {
+    setIsLoadingMessages(true);
+    const token = localStorage.getItem("agent_token");
+    const res = await fetch(
+      `https://api.texef.com/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const data = await res.json();
 
-      setMessages((prev) => ({
-        ...prev,
-        [chat.conversation_id]: data,
-      }));
-    } catch (err) {
-      console.error("⚠️ Fetch messages error:", err);
-    } finally {
-      setIsLoadingMessages(false);
-    }
-  };
+    setMessages((prev) => ({
+      ...prev,
+      [chat.conversation_id]: data,
+    }));
+  } catch (err) {
+    console.error("⚠️ Fetch messages error:", err);
+  } finally {
+    setIsLoadingMessages(false);
+  }
+};
+
 
   /* ---------- SEND ---------- */
   // const handleSendMessage = (text) => {
