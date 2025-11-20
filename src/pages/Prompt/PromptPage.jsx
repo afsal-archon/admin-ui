@@ -105,7 +105,6 @@
 // }
 
 
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Key, MessageSquare } from "lucide-react";
@@ -114,15 +113,12 @@ import "./PromptPage.css";
 export default function PromptPage() {
   const [apiKey, setApiKey] = useState("");
   const [prompt, setPrompt] = useState("");
-  const [useCustomPrompt, setUseCustomPrompt] = useState(false); // 👈 NEW
-  const [modelName, setModelName] = useState("gpt-4o-mini");
-  const [temperature, setTemperature] = useState(0.7);
-  const [maxTokens, setMaxTokens] = useState(500);
+  const [useCustomPrompt, setUseCustomPrompt] = useState(false);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const validateKey = (key) => key.startsWith("sk-"); // ✅ no : string
+  const validateKey = (key) => key.startsWith("sk-");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -148,15 +144,15 @@ export default function PromptPage() {
       return;
     }
 
-    // Common payload
+    // Fixed default API parameters
     const payload = {
       openai_api_key: apiKey,
-      model_name: modelName,
-      temperature: Number(temperature),
-      max_tokens: Number(maxTokens),
+      model_name: "gpt-4",
+      temperature: 0.9,
+      max_tokens: 1000,
     };
 
-    // Only send base_prompt when overriding
+    // Only override base_prompt when user explicitly enabled it
     if (useCustomPrompt) {
       payload.base_prompt = prompt;
     }
@@ -224,7 +220,7 @@ export default function PromptPage() {
       <div className="prompt-container">
         <h1 className="prompt-title">AI Configuration</h1>
         <p className="prompt-subtitle">
-          Store your OpenAI settings and base system prompt for this tenant.
+          Store your OpenAI API key and optional base system prompt for this tenant.
         </p>
 
         <form onSubmit={handleSubmit} className="prompt-form">
@@ -270,46 +266,7 @@ export default function PromptPage() {
             disabled={!useCustomPrompt}
           />
 
-          {/* Model + Advanced settings */}
-          <div className="advanced-row">
-            <div className="advanced-col">
-              <label className="input-label">Model</label>
-              <select
-                className="input-field"
-                value={modelName}
-                onChange={(e) => setModelName(e.target.value)}
-              >
-                <option value="gpt-4o-mini">gpt-4o-mini</option>
-                <option value="gpt-4">gpt-4</option>
-                <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
-              </select>
-            </div>
-
-            <div className="advanced-col">
-              <label className="input-label">Temperature (0–1)</label>
-              <input
-                type="number"
-                min="0"
-                max="1"
-                step="0.1"
-                value={temperature}
-                onChange={(e) => setTemperature(e.target.value)}
-                className="input-field"
-              />
-            </div>
-
-            <div className="advanced-col">
-              <label className="input-label">Max Tokens</label>
-              <input
-                type="number"
-                min="50"
-                max="2000"
-                value={maxTokens}
-                onChange={(e) => setMaxTokens(e.target.value)}
-                className="input-field"
-              />
-            </div>
-          </div>
+          {/* No model/temperature/maxTokens UI – they’re fixed in payload */}
 
           <button type="submit" className="submit-btn" disabled={loading}>
             {loading ? "Saving AI config..." : "Save AI Configuration"}
