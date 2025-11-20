@@ -106,6 +106,7 @@
 
 
 
+const BASE_URL = "https://api.texef.com/api";
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -134,6 +135,7 @@ export default function PromptPage() {
       return;
     }
 
+    // using auth_token as you set
     const tenantAdminToken = localStorage.getItem("auth_token");
     if (!tenantAdminToken) {
       alert("❌ Missing tenant admin token. Please login again.");
@@ -155,7 +157,8 @@ export default function PromptPage() {
 
     setLoading(true);
     try {
-      let res = await fetch("/api/ai-config", {
+      // CREATE
+      let res = await fetch(`${BASE_URL}/ai-config`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -164,12 +167,13 @@ export default function PromptPage() {
         body: JSON.stringify(payload),
       });
 
+      // If POST fails, try UPDATE
       if (!res.ok) {
         console.warn(
-          "POST /api/ai-config failed, trying PUT instead…",
+          "POST /ai-config failed, trying PUT instead…",
           res.status
         );
-        res = await fetch("/api/ai-config", {
+        res = await fetch(`${BASE_URL}/ai-config`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -211,7 +215,6 @@ export default function PromptPage() {
 
       <div className="prompt-container">
         <h1 className="prompt-title">AI Configuration</h1>
-        {/* subtitle removed */}
 
         <form onSubmit={handleSubmit} className="prompt-form">
           {/* OpenAI API Key */}
