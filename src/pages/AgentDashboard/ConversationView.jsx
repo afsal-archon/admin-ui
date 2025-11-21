@@ -5467,807 +5467,11 @@
 
 
 
-// import React, { useState, useEffect, useRef } from "react";
-// import "../../styles/conversation.css";
-
-// /* -------------------------- Chat List -------------------------- */
-// const ChatList = ({ chats, activeChat, pausedChats, closedChats, handleChatClick }) => {
-//   const [searchTerm, setSearchTerm] = useState("");
-
-//   const filteredChats = chats.filter((chat) =>
-//     chat.id.toLowerCase().includes(searchTerm.toLowerCase())
-//   );
-
-//   return (
-//     <div className="chat-list">
-//       <div className="chat-list-header">
-//         <h2>Inbox</h2>
-//         <input
-//           type="text"
-//           placeholder="Search by chat ID..."
-//           value={searchTerm}
-//           onChange={(e) => setSearchTerm(e.target.value)}
-//           className="search-input"
-//         />
-//       </div>
-
-//       <div className="chats-section">
-//         <h3 className="section-title">CHATS ({filteredChats.length})</h3>
-//         {filteredChats.length === 0 ? (
-//           <div className="empty-state">No conversations yet</div>
-//         ) : (
-//           filteredChats.map((chat) => {
-//             const isPaused = pausedChats.has(chat.id);
-//             const isActive = activeChat?.id === chat.id;
-
-//             const isClosed =
-//               chat.status === "resolved" || closedChats.has(chat.conversation_id);
-
-//             return (
-//               <div
-//                 key={chat.id}
-//                 className={`chat-item 
-//                   ${isActive ? "active" : ""} 
-//                   ${isPaused ? "paused" : ""} 
-//                   ${isClosed ? "closed" : ""}`}
-//                 onClick={() => handleChatClick(chat)}
-//               >
-//                 <div className="chat-info">
-//                   <div className="chat-header-row">
-//                     <span className="chat-name">{chat.id}</span>
-//                     <span className="chat-time">
-//                       {isClosed ? "Closed" : chat.channel}
-//                     </span>
-//                   </div>
-//                 </div>
-//               </div>
-//             );
-//           })
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// /* -------------------------- Chat Window -------------------------- */
-// const ChatWindow = ({
-//   chat,
-//   isTyping,
-//   onCloseChat,
-//   isPaused,
-//   isClosed,
-//   onTogglePause,
-//   messages,
-//   onSendMessage,
-//   isLoadingMessages,
-//   consoleSocketStatus,
-// }) => {
-//   const [message, setMessage] = useState("");
-//   const messagesEndRef = useRef(null);
-
-//   useEffect(() => {
-//     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-//   }, [messages, isTyping]);
-
-//   const disabled =
-//     isPaused || isClosed || consoleSocketStatus !== "connected";
-
-//   const handleSend = () => {
-//     if (!message.trim() || disabled) return;
-//     onSendMessage(message);
-//     setMessage("");
-//   };
-
-//   const handleKeyPress = (e) => {
-//     if (e.key === "Enter" && !e.shiftKey && !disabled) {
-//       e.preventDefault();
-//       handleSend();
-//     }
-//   };
-
-//   if (!chat)
-//     return (
-//       <div className="chat-window empty">
-//         <p>Select a chat to start messaging</p>
-//       </div>
-//     );
-
-//   const statusClass = isClosed
-//     ? "closed"
-//     : isPaused
-//     ? "paused"
-//     : consoleSocketStatus === "connected"
-//     ? "online"
-//     : "connecting";
-
-//   const statusText = isClosed
-//     ? "Closed"
-//     : isPaused
-//     ? "Paused"
-//     : consoleSocketStatus === "connected"
-//     ? "Online"
-//     : "Connecting...";
-
-//   const inputPlaceholder = isClosed
-//     ? "Conversation is closed..."
-//     : isPaused
-//     ? "Chat is paused..."
-//     : consoleSocketStatus !== "connected"
-//     ? "Connecting..."
-//     : "Type your message...";
-
-//   return (
-//     <div className="chat-window">
-//       <div className="chat-window-header">
-//         <div className="chat-user-info">
-//           <div>
-//             <h3>{chat.id}</h3>
-//             <span className={`status-badge ${statusClass}`}>
-//               {statusText}
-//             </span>
-//           </div>
-//         </div>
-//         <div className="chat-actions">
-//           <button
-//             className={`action-btn icon-btn ${
-//               isPaused ? "unlock-btn" : "lock-btn"
-//             }`}
-//             onClick={() => onTogglePause(chat.id)}
-//             disabled={isClosed}
-//           >
-//             {isPaused ? "🔓" : "🔒"}
-//           </button>
-//           <button
-//             className="action-btn close-btn"
-//             onClick={() => onCloseChat(chat.conversation_id)}
-//             disabled={isClosed}
-//           >
-//             Close
-//           </button>
-//         </div>
-//       </div>
-
-//       <div className="messages-container">
-//         {isLoadingMessages ? (
-//           <div className="empty-state">Loading messages...</div>
-//         ) : messages.length === 0 ? (
-//           <div className="empty-state">No messages yet.</div>
-//         ) : (
-//           messages.map((msg) => {
-//             const fromAgent = msg.sender === "agent";
-//             const fromBot = msg.sender === "bot" || msg.sender === "ai";
-//             const fromUser = !fromAgent && !fromBot;
-
-//             let messageClass = "";
-//             let bubbleClass = "";
-
-//             if (fromAgent) {
-//               messageClass = "agent";
-//               bubbleClass = "agent-bubble";
-//             } else if (fromBot) {
-//               messageClass = "bot";
-//               bubbleClass = "bot-bubble";
-//             } else if (fromUser) {
-//               messageClass = "user";
-//               bubbleClass = "user-bubble";
-//             }
-
-//             return (
-//               <div key={msg.id} className={`message ${messageClass}`}>
-//                 <div className={`message-bubble ${bubbleClass}`}>
-//                   {msg.text}
-//                 </div>
-//                 <div className="message-time">
-//                   {msg.timestamp
-//                     ? new Date(msg.timestamp).toLocaleTimeString()
-//                     : ""}
-//                 </div>
-//               </div>
-//             );
-//           })
-//         )}
-//         <div ref={messagesEndRef} />
-//       </div>
-
-//       <div
-//         className={`message-input-container ${
-//           disabled ? "disabled" : ""
-//         }`}
-//       >
-//         <input
-//           type="text"
-//           placeholder={inputPlaceholder}
-//           value={message}
-//           onChange={(e) => setMessage(e.target.value)}
-//           onKeyPress={handleKeyPress}
-//           className="message-input"
-//           disabled={disabled}
-//         />
-//         <button
-//           onClick={handleSend}
-//           className="send-btn"
-//           disabled={disabled}
-//         >
-//           Send
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// /* -------------------------- Customer Info -------------------------- */
-// const CustomerInfo = ({ chat }) => {
-//   if (!chat) return null;
-//   return (
-//     <div className="customer-info">
-//       <h2>Chat Details</h2>
-//       <div className="info-section">
-//         <div className="info-item">
-//           <span>Chat ID:</span> {chat.id}
-//         </div>
-//         <div className="info-item">
-//           <span>Conversation ID:</span> {chat.conversation_id}
-//         </div>
-//         <div className="info-item">
-//           <span>Status:</span> {chat.status}
-//         </div>
-//         <div className="info-item">
-//           <span>Channel:</span> {chat.channel}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// /* -------------------------- Agent Console -------------------------- */
-// const AgentConsole = () => {
-//   const [consoleSocket, setConsoleSocket] = useState(null);
-//   const [consoleSocketStatus, setConsoleSocketStatus] = useState("disconnected");
-//   const [chats, setChats] = useState([]);
-//   const [messages, setMessages] = useState({});
-//   const [activeChat, setActiveChat] = useState(null);
-//   const [pausedChats, setPausedChats] = useState(new Set());
-//   const [closedChats, setClosedChats] = useState(new Set());
-//   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
-
-//   /* ===================================================
-//      Fetch Agent Inbox (my_active)
-//      =================================================== */
-//   useEffect(() => {
-//     const fetchInbox = async () => {
-//       try {
-//         const token = localStorage.getItem("agent_token");
-//         if (!token) return;
-
-//         const res = await fetch(
-//           "https://api.texef.com/api/agents/conversations/inbox?type=my_active&period=all&limit=200",
-//           {
-//             headers: { Authorization: `Bearer ${token}` },
-//           }
-//         );
-
-//         const data = await res.json();
-//         console.log("📥 Inbox conversations:", data);
-
-//         if (Array.isArray(data.conversations)) {
-//           const formatted = data.conversations.map((c) => ({
-//             id: String(c.id),
-//             conversation_id: c.id,
-//             channel: c.channel || "inbox",
-//             status: c.status || "active", // could be "resolved" too
-//           }));
-
-//           setChats((prev) => {
-//             const merged = new Map();
-//             [...prev, ...formatted].forEach((c) => {
-//               merged.set(c.id, c);
-//             });
-//             return Array.from(merged.values());
-//           });
-//         }
-//       } catch (err) {
-//         console.error("⚠️ Inbox fetch error:", err);
-//       }
-//     };
-
-//     fetchInbox();
-//   }, []);
-
-//   /* ---------- Console WebSocket ---------- */
-//   useEffect(() => {
-//     const tenantId = localStorage.getItem("tenant_id");
-//     const agentId = localStorage.getItem("agent_id");
-//     const token = localStorage.getItem("agent_token");
-
-//     if (!tenantId || !agentId || !token) {
-//       console.warn("❌ Missing tenant_id or agent_id — please login again");
-//       return;
-//     }
-
-//     const wsUrl = `wss://api.texef.com/ws/console?tenant_id=${tenantId}&agent_id=${agentId}&token=${encodeURIComponent(
-//       token
-//     )}`;
-//     const ws = new WebSocket(wsUrl);
-
-//     setConsoleSocket(ws);
-//     setConsoleSocketStatus("connecting");
-
-//     ws.onopen = () => {
-//       console.log("✅ Connected to Agent Console");
-//       setConsoleSocketStatus("connected");
-//     };
-
-//     ws.onmessage = (event) => {
-//       const data = JSON.parse(event.data);
-
-//       if (data.type === "snapshot") {
-//         const normalized = data.conversations.map((c) => ({
-//           id: c.id || c.chat_id || "unknown",
-//           conversation_id: c.conversation_id || c.id,
-//           channel: c.channel || "unknown",
-//           status: c.status || "active",
-//         }));
-
-//         setChats((prev) => {
-//           const map = new Map();
-//           [...prev, ...normalized].forEach((x) => {
-//             map.set(x.id, x);
-//           });
-//           return Array.from(map.values());
-//         });
-//       } else if (data.type === "new_conversation") {
-//         const conv = data.conversation;
-//         const newConv = {
-//           id: conv.id,
-//           conversation_id: conv.conversation_id || conv.id,
-//           channel: conv.channel || "unknown",
-//           status: conv.status || "active",
-//         };
-
-//         setChats((prev) => [newConv, ...prev]);
-//       } else if (data.type === "message") {
-//         handleMessage(data);
-//       } else if (data.type === "conversation_closed") {
-//         handleConversationClosed(data.conversation_id);
-//       }
-//     };
-
-//     ws.onclose = () => {
-//       console.log("⚠️ Console socket closed");
-//       setConsoleSocketStatus("disconnected");
-//     };
-
-//     ws.onerror = (err) => console.error("⚠️ Console socket error:", err);
-
-//     const heartbeat = setInterval(() => {
-//       if (ws.readyState === WebSocket.OPEN) {
-//         ws.send(JSON.stringify({ type: "ping" }));
-//       }
-//     }, 30000);
-
-//     return () => {
-//       clearInterval(heartbeat);
-//       ws.close();
-//     };
-//   }, []); // no window.__consoleSocketInitialized anymore
-
-//   /* ---------- Helpers ---------- */
-//   // const handleMessage = (data) => {
-//   //   const convId = data.conversation_id || activeChat?.conversation_id;
-//   //   if (!convId) return;
-
-//   //   const newMsg = {
-//   //     id: data.id || `msg_${Date.now()}`,
-//   //     sender: data.sender,
-//   //     text: data.text,
-//   //     timestamp: data.timestamp || new Date().toISOString(),
-//   //   };
-
-//   //   setMessages((prev) => ({
-//   //     ...prev,
-//   //     [convId]: [...(prev[convId] || []), newMsg],
-//   //   }));
-//   // };
-
-// // const handleMessage = (data) => {
-// //   const convId = data.conversation_id || activeChat?.conversation_id;
-// //   if (!convId) return;
-
-// //   const msgId =
-// //     data.id ||
-// //     data.message_id ||
-// //     data.msg_id ||
-// //     null;
-
-// //   const ts =
-// //     data.timestamp ||
-// //     data.created_at ||
-// //     data.sent_at ||
-// //     new Date().toISOString();
-
-// //   const sender = data.sender;
-// //   const text = (data.text || "").trim();
-
-// //   if (!text) return;
-
-// //   const newMsg = {
-// //     id: msgId || `msg_${ts}_${sender}_${text}`,
-// //     sender,
-// //     text,
-// //     timestamp: ts,
-// //   };
-
-// //   setMessages((prev) => {
-// //     const current = prev[convId] || [];
-
-// //     // 1️⃣ id ഉണ്ടെങ്കിൽ: same id already ഉണ്ടെങ്കിൽ skip
-// //     if (msgId && current.some((m) => m.id === msgId)) {
-// //       return prev;
-// //     }
-
-// //     // 2️⃣ id ഇല്ലെങ്കിൽ: sender + text + timestamp ഒന്നുപോലെ ഉള്ള message ഉണ്ടെങ്കിൽ skip
-// //     if (
-// //       !msgId &&
-// //       current.some(
-// //         (m) =>
-// //           m.sender === sender &&
-// //           m.text === text &&
-// //           m.timestamp === ts
-// //       )
-// //     ) {
-// //       return prev;
-// //     }
-
-// //     return {
-// //       ...prev,
-// //       [convId]: [...current, newMsg],
-// //     };
-// //   });
-// // };
-
-
-
-//   const handleMessage = (data) => {
-//   const convId = data.conversation_id || activeChat?.conversation_id;
-//   if (!convId) return;
-
-//   const msgId =
-//     data.id ||
-//     data.message_id ||
-//     data.msg_id ||
-//     null;
-
-//   const ts =
-//     data.timestamp ||
-//     data.created_at ||
-//     data.sent_at ||
-//     new Date().toISOString();
-
-//   const sender = data.sender;
-//   const text = (data.text || "").trim();
-//   if (!text) return;
-
-//   const newMsg = {
-//     id: msgId || `msg_${ts}_${sender}_${text}`,
-//     sender,
-//     text,
-//     timestamp: ts,
-//   };
-
-//   setMessages((prev) => {
-//     const current = prev[convId] || [];
-
-//     // 1️⃣ id ഉണ്ടെങ്കിൽ: same id already ഉണ്ടെങ്കിൽ skip
-//     if (msgId && current.some((m) => m.id === msgId)) {
-//       // console.log("🧹 skip WS duplicate by id", msgId);
-//       return prev;
-//     }
-
-//     // 2️⃣ id ഇല്ലെങ്കിൽ: composite key ഉപയോഗിച്ച് duplicate avoid
-//     const key = `${sender}|${text}|${ts}`;
-//     if (current.some((m) => `${m.sender}|${m.text}|${m.timestamp}` === key)) {
-//       // console.log("🧹 skip WS duplicate by key", key);
-//       return prev;
-//     }
-
-//     return {
-//       ...prev,
-//       [convId]: [...current, newMsg],
-//     };
-//   });
-// };
-
-
-//   const handleConversationClosed = (conversationId) => {
-//     setChats((prev) =>
-//       prev.map((c) =>
-//         c.conversation_id === conversationId ? { ...c, status: "resolved" } : c
-//       )
-//     );
-
-//     setClosedChats((prev) => {
-//       const s = new Set(prev);
-//       s.add(conversationId);
-//       return s;
-//     });
-
-//     setActiveChat((prev) =>
-//       prev && prev.conversation_id === conversationId
-//         ? { ...prev, status: "resolved" }
-//         : prev
-//     );
-//   };
-
-//   /* ---------- JOIN ---------- */
-//   // const handleChatClick = async (chat) => {
-//   //   setActiveChat(chat);
-
-//   //   if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
-//   //     consoleSocket.send(
-//   //       JSON.stringify({ type: "join", conversation_id: chat.conversation_id })
-//   //     );
-//   //   }
-
-//   //   try {
-//   //     setIsLoadingMessages(true);
-//   //     const token = localStorage.getItem("agent_token");
-//   //     const res = await fetch(
-//   //       `https://api.texef.com/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
-//   //       { headers: { Authorization: `Bearer ${token}` } }
-//   //     );
-//   //     const data = await res.json();
-
-//   //     setMessages((prev) => ({
-//   //       ...prev,
-//   //       [chat.conversation_id]: data,
-//   //     }));
-//   //   } catch (err) {
-//   //     console.error("⚠️ Fetch messages error:", err);
-//   //   } finally {
-//   //     setIsLoadingMessages(false);
-//   //   }
-//   // };
-
-// // const handleChatClick = async (chat) => {
-// //   setActiveChat(chat);
-
-// //   if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
-// //     consoleSocket.send(
-// //       JSON.stringify({ type: "join", conversation_id: chat.conversation_id })
-// //     );
-// //   }
-
-// //   try {
-// //     setIsLoadingMessages(true);
-// //     const token = localStorage.getItem("agent_token");
-// //     const res = await fetch(
-// //       `https://api.texef.com/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
-// //       { headers: { Authorization: `Bearer ${token}` } }
-// //     );
-// //     const data = await res.json();
-
-// //    const seen = new Set();
-// // const normalized = Array.isArray(data)
-// //   ? data
-// //       .map((m) => {
-// //         const id =
-// //           m.id ||
-// //           m.message_id ||
-// //           m.msg_id ||
-// //           `msg_${m.created_at || m.timestamp || m.text}`;
-
-// //         const sender = m.sender || m.role || "user";
-// //         const text = (m.text || m.message || m.reply || "").trim();
-// //         const ts =
-// //           m.timestamp || m.created_at || m.sent_at || new Date().toISOString();
-
-// //         if (!text) return null;
-
-// //         const key = `${id}|${sender}|${text}|${ts}`;
-// //         if (seen.has(key)) return null;
-// //         seen.add(key);
-
-// //         return {
-// //           id,
-// //           sender,
-// //           text,
-// //           timestamp: ts,
-// //         };
-// //       })
-// //       .filter(Boolean)
-// //   : [];
-
-
-// //     setMessages((prev) => ({
-// //       ...prev,
-// //       [chat.conversation_id]: normalized,
-// //     }));
-// //   } catch (err) {
-// //     console.error("⚠️ Fetch messages error:", err);
-// //   } finally {
-// //     setIsLoadingMessages(false);
-// //   }
-// // };
-
-
-//   const handleChatClick = async (chat) => {
-//   setActiveChat(chat);
-
-//   if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
-//     consoleSocket.send(
-//       JSON.stringify({ type: "join", conversation_id: chat.conversation_id })
-//     );
-//   }
-
-//   try {
-//     setIsLoadingMessages(true);
-//     const token = localStorage.getItem("agent_token");
-//     const res = await fetch(
-//       `https://api.texef.com/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
-//       { headers: { Authorization: `Bearer ${token}` } }
-//     );
-//     const data = await res.json();
-
-//     // ✅ Normalize + dedupe history
-//     const seen = new Set();  // 👈 ഇവിടെ define cheyyണം
-
-//     const normalized = Array.isArray(data)
-//       ? data
-//           .map((m) => {
-//             const id =
-//               m.id ||
-//               m.message_id ||
-//               m.msg_id ||
-//               `msg_${m.created_at || m.timestamp || m.text}`;
-
-//             const sender = m.sender || m.role || "user";
-//             const text = (m.text || m.message || m.reply || "").trim();
-//             const ts =
-//               m.timestamp || m.created_at || m.sent_at || new Date().toISOString();
-
-//             if (!text) return null;
-
-//             const key = `${id}|${sender}|${text}|${ts}`;
-//             if (seen.has(key)) return null;
-//             seen.add(key);
-
-//             return {
-//               id,
-//               sender,
-//               text,
-//               timestamp: ts,
-//             };
-//           })
-//           .filter(Boolean)
-//       : [];
-
-//     setMessages((prev) => ({
-//       ...prev,
-//       [chat.conversation_id]: normalized,
-//     }));
-//   } catch (err) {
-//     console.error("⚠️ Fetch messages error:", err);
-//   } finally {
-//     setIsLoadingMessages(false);
-//   }
-// };
-
-
-
-
-//   /* ---------- SEND ---------- */
-//   // const handleSendMessage = (text) => {
-//   //   if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) return;
-//   //   if (!activeChat) return;
-
-//   //   const msg = { conversation_id: activeChat.conversation_id, text };
-//   //   consoleSocket.send(JSON.stringify(msg));
-
-//   const handleSendMessage = (text) => {
-//   if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) return;
-//   if (!activeChat) return;
-
-//   const msg = { conversation_id: activeChat.conversation_id, text };
-//   consoleSocket.send(JSON.stringify(msg));
-
-//   // 🔥 ഇനി local-ൽ add cheyyേണ്ട: backend echo ചെയ്യുന്ന 'message' event-ിൽ handleMessage വഴി add ചെയ്യും
-// };
-
-
-//   //   handleMessage({
-//   //     conversation_id: activeChat.conversation_id,
-//   //     sender: "agent",
-//   //     text,
-//   //     timestamp: new Date().toISOString(),
-//   //   });
-//   // };
-
-//   /* ---------- CLOSE (WebSocket only) ---------- */
-//   const handleCloseChat = (conversationId) => {
-//     if (!conversationId) return;
-
-//     if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) {
-//       console.warn("⚠️ Console socket not open, cannot send close_conversation");
-//       // optional: still mark closed locally
-//       handleConversationClosed(conversationId);
-//       return;
-//     }
-
-//     // 🔐 Send close_conversation over WS
-//     consoleSocket.send(
-//       JSON.stringify({
-//         type: "close_conversation",
-//         conversation_id: conversationId,
-//       })
-//     );
-
-//     // Optimistic UI update
-//     handleConversationClosed(conversationId);
-//   };
-
-//   const activeChatMessages = activeChat
-//     ? messages[activeChat.conversation_id] || []
-//     : [];
-
-//   const isActiveChatClosed =
-//     activeChat &&
-//     (activeChat.status === "resolved" ||
-//       closedChats.has(activeChat.conversation_id));
-
-//   return (
-//     <div className="app">
-//       <ChatList
-//         chats={chats}
-//         activeChat={activeChat}
-//         pausedChats={pausedChats}
-//         closedChats={closedChats}
-//         handleChatClick={handleChatClick}
-//       />
-//       <ChatWindow
-//         chat={activeChat}
-//         isTyping={false}
-//         onCloseChat={handleCloseChat}
-//         isPaused={activeChat ? pausedChats.has(activeChat.id) : false}
-//         isClosed={!!isActiveChatClosed}
-//         onTogglePause={(id) =>
-//           setPausedChats((prev) => {
-//             const s = new Set(prev);
-//             if (s.has(id)) s.delete(id);
-//             else s.add(id);
-//             return s;
-//           })
-//         }
-//         messages={activeChatMessages}
-//         onSendMessage={handleSendMessage}
-//         isLoadingMessages={isLoadingMessages}
-//         consoleSocketStatus={consoleSocketStatus}
-//       />
-//       <CustomerInfo chat={activeChat} />
-//     </div>
-//   );
-// };
-
-// export default AgentConsole;
-
-
-
-
-
-
-
-
-
 import React, { useState, useEffect, useRef } from "react";
 import "../../styles/conversation.css";
 
 /* -------------------------- Chat List -------------------------- */
-const ChatList = ({
-  chats,
-  activeChat,
-  pausedChats,
-  closedChats,
-  handleChatClick,
-}) => {
+const ChatList = ({ chats, activeChat, pausedChats, closedChats, handleChatClick }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredChats = chats.filter((chat) =>
@@ -6297,8 +5501,7 @@ const ChatList = ({
             const isActive = activeChat?.id === chat.id;
 
             const isClosed =
-              chat.status === "resolved" ||
-              closedChats.has(chat.conversation_id);
+              chat.status === "resolved" || closedChats.has(chat.conversation_id);
 
             return (
               <div
@@ -6519,8 +5722,7 @@ const CustomerInfo = ({ chat }) => {
 /* -------------------------- Agent Console -------------------------- */
 const AgentConsole = () => {
   const [consoleSocket, setConsoleSocket] = useState(null);
-  const [consoleSocketStatus, setConsoleSocketStatus] =
-    useState("disconnected");
+  const [consoleSocketStatus, setConsoleSocketStatus] = useState("disconnected");
   const [chats, setChats] = useState([]);
   const [messages, setMessages] = useState({});
   const [activeChat, setActiveChat] = useState(null);
@@ -6552,7 +5754,7 @@ const AgentConsole = () => {
             id: String(c.id),
             conversation_id: c.id,
             channel: c.channel || "inbox",
-            status: c.status || "active", // could be "resolved"
+            status: c.status || "active", // could be "resolved" too
           }));
 
           setChats((prev) => {
@@ -6647,93 +5849,139 @@ const AgentConsole = () => {
       clearInterval(heartbeat);
       ws.close();
     };
-  }, []);
+  }, []); // no window.__consoleSocketInitialized anymore
 
-  /* ---------- handleMessage (normalized sender + dedupe) ---------- */
+  /* ---------- Helpers ---------- */
+  // const handleMessage = (data) => {
+  //   const convId = data.conversation_id || activeChat?.conversation_id;
+  //   if (!convId) return;
+
+  //   const newMsg = {
+  //     id: data.id || `msg_${Date.now()}`,
+  //     sender: data.sender,
+  //     text: data.text,
+  //     timestamp: data.timestamp || new Date().toISOString(),
+  //   };
+
+  //   setMessages((prev) => ({
+  //     ...prev,
+  //     [convId]: [...(prev[convId] || []), newMsg],
+  //   }));
+  // };
+
+// const handleMessage = (data) => {
+//   const convId = data.conversation_id || activeChat?.conversation_id;
+//   if (!convId) return;
+
+//   const msgId =
+//     data.id ||
+//     data.message_id ||
+//     data.msg_id ||
+//     null;
+
+//   const ts =
+//     data.timestamp ||
+//     data.created_at ||
+//     data.sent_at ||
+//     new Date().toISOString();
+
+//   const sender = data.sender;
+//   const text = (data.text || "").trim();
+
+//   if (!text) return;
+
+//   const newMsg = {
+//     id: msgId || `msg_${ts}_${sender}_${text}`,
+//     sender,
+//     text,
+//     timestamp: ts,
+//   };
+
+//   setMessages((prev) => {
+//     const current = prev[convId] || [];
+
+//     // 1️⃣ id ഉണ്ടെങ്കിൽ: same id already ഉണ്ടെങ്കിൽ skip
+//     if (msgId && current.some((m) => m.id === msgId)) {
+//       return prev;
+//     }
+
+//     // 2️⃣ id ഇല്ലെങ്കിൽ: sender + text + timestamp ഒന്നുപോലെ ഉള്ള message ഉണ്ടെങ്കിൽ skip
+//     if (
+//       !msgId &&
+//       current.some(
+//         (m) =>
+//           m.sender === sender &&
+//           m.text === text &&
+//           m.timestamp === ts
+//       )
+//     ) {
+//       return prev;
+//     }
+
+//     return {
+//       ...prev,
+//       [convId]: [...current, newMsg],
+//     };
+//   });
+// };
+
+
+
   const handleMessage = (data) => {
-    const convId = data.conversation_id || activeChat?.conversation_id;
-    if (!convId) return;
+  const convId = data.conversation_id || activeChat?.conversation_id;
+  if (!convId) return;
 
-    const msgId =
-      data.id || data.message_id || data.msg_id || null;
+  const msgId =
+    data.id ||
+    data.message_id ||
+    data.msg_id ||
+    null;
 
-    const ts =
-      data.timestamp ||
-      data.created_at ||
-      data.sent_at ||
-      new Date().toISOString();
+  const ts =
+    data.timestamp ||
+    data.created_at ||
+    data.sent_at ||
+    new Date().toISOString();
 
-    // Normalize sender
-    const rawSender =
-      data.sender || data.role || data.source || "user";
+  const sender = data.sender;
+  const text = (data.text || "").trim();
+  if (!text) return;
 
-    let sender = String(rawSender).toLowerCase();
-
-    // Agent mapping
-    if (
-      sender === "console_agent" ||
-      sender === "agent_console" ||
-      sender === "support_agent" ||
-      sender === "human_agent" ||
-      sender === "agent"
-    ) {
-      sender = "agent";
-    }
-    // Bot / AI mapping
-    else if (
-      sender === "bot" ||
-      sender === "ai" ||
-      sender === "assistant" ||
-      sender === "system_bot"
-    ) {
-      sender = "bot";
-    }
-    // Everything else = user
-    else {
-      sender = "user";
-    }
-
-    const text = (data.text || data.message || data.reply || "").trim();
-    if (!text) return;
-
-    const newMsg = {
-      id: msgId || `msg_${ts}_${sender}_${text}`,
-      sender,
-      text,
-      timestamp: ts,
-    };
-
-    setMessages((prev) => {
-      const current = prev[convId] || [];
-
-      // Avoid dupes by id
-      if (msgId && current.some((m) => m.id === msgId)) {
-        return prev;
-      }
-
-      // Avoid dupes by composite key
-      const key = `${sender}|${text}|${ts}`;
-      if (
-        current.some(
-          (m) => `${m.sender}|${m.text}|${m.timestamp}` === key
-        )
-      ) {
-        return prev;
-      }
-
-      return {
-        ...prev,
-        [convId]: [...current, newMsg],
-      };
-    });
+  const newMsg = {
+    id: msgId || `msg_${ts}_${sender}_${text}`,
+    sender,
+    text,
+    timestamp: ts,
   };
+
+  setMessages((prev) => {
+    const current = prev[convId] || [];
+
+    // 1️⃣ id ഉണ്ടെങ്കിൽ: same id already ഉണ്ടെങ്കിൽ skip
+    if (msgId && current.some((m) => m.id === msgId)) {
+      // console.log("🧹 skip WS duplicate by id", msgId);
+      return prev;
+    }
+
+    // 2️⃣ id ഇല്ലെങ്കിൽ: composite key ഉപയോഗിച്ച് duplicate avoid
+    const key = `${sender}|${text}|${ts}`;
+    if (current.some((m) => `${m.sender}|${m.text}|${m.timestamp}` === key)) {
+      // console.log("🧹 skip WS duplicate by key", key);
+      return prev;
+    }
+
+    return {
+      ...prev,
+      [convId]: [...current, newMsg],
+    };
+  });
+};
+
 
   const handleConversationClosed = (conversationId) => {
     setChats((prev) =>
       prev.map((c) =>
-        c.conversation_id === conversationId
-          ? { ...c, status: "resolved" }
-          : c
+        c.conversation_id === conversationId ? { ...c, status: "resolved" } : c
       )
     );
 
@@ -6750,98 +5998,202 @@ const AgentConsole = () => {
     );
   };
 
-  /* ---------- JOIN & load history ---------- */
+  /* ---------- JOIN ---------- */
+  // const handleChatClick = async (chat) => {
+  //   setActiveChat(chat);
+
+  //   if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
+  //     consoleSocket.send(
+  //       JSON.stringify({ type: "join", conversation_id: chat.conversation_id })
+  //     );
+  //   }
+
+  //   try {
+  //     setIsLoadingMessages(true);
+  //     const token = localStorage.getItem("agent_token");
+  //     const res = await fetch(
+  //       `https://api.texef.com/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+  //     const data = await res.json();
+
+  //     setMessages((prev) => ({
+  //       ...prev,
+  //       [chat.conversation_id]: data,
+  //     }));
+  //   } catch (err) {
+  //     console.error("⚠️ Fetch messages error:", err);
+  //   } finally {
+  //     setIsLoadingMessages(false);
+  //   }
+  // };
+
+// const handleChatClick = async (chat) => {
+//   setActiveChat(chat);
+
+//   if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
+//     consoleSocket.send(
+//       JSON.stringify({ type: "join", conversation_id: chat.conversation_id })
+//     );
+//   }
+
+//   try {
+//     setIsLoadingMessages(true);
+//     const token = localStorage.getItem("agent_token");
+//     const res = await fetch(
+//       `https://api.texef.com/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
+//       { headers: { Authorization: `Bearer ${token}` } }
+//     );
+//     const data = await res.json();
+
+//    const seen = new Set();
+// const normalized = Array.isArray(data)
+//   ? data
+//       .map((m) => {
+//         const id =
+//           m.id ||
+//           m.message_id ||
+//           m.msg_id ||
+//           `msg_${m.created_at || m.timestamp || m.text}`;
+
+//         const sender = m.sender || m.role || "user";
+//         const text = (m.text || m.message || m.reply || "").trim();
+//         const ts =
+//           m.timestamp || m.created_at || m.sent_at || new Date().toISOString();
+
+//         if (!text) return null;
+
+//         const key = `${id}|${sender}|${text}|${ts}`;
+//         if (seen.has(key)) return null;
+//         seen.add(key);
+
+//         return {
+//           id,
+//           sender,
+//           text,
+//           timestamp: ts,
+//         };
+//       })
+//       .filter(Boolean)
+//   : [];
+
+
+//     setMessages((prev) => ({
+//       ...prev,
+//       [chat.conversation_id]: normalized,
+//     }));
+//   } catch (err) {
+//     console.error("⚠️ Fetch messages error:", err);
+//   } finally {
+//     setIsLoadingMessages(false);
+//   }
+// };
+
+
   const handleChatClick = async (chat) => {
-    setActiveChat(chat);
+  setActiveChat(chat);
 
-    if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
-      consoleSocket.send(
-        JSON.stringify({
-          type: "join",
-          conversation_id: chat.conversation_id,
-        })
-      );
-    }
+  if (consoleSocket && consoleSocket.readyState === WebSocket.OPEN) {
+    consoleSocket.send(
+      JSON.stringify({ type: "join", conversation_id: chat.conversation_id })
+    );
+  }
 
-    try {
-      setIsLoadingMessages(true);
-      const token = localStorage.getItem("agent_token");
-      const res = await fetch(
-        `https://api.texef.com/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const data = await res.json();
+  try {
+    setIsLoadingMessages(true);
+    const token = localStorage.getItem("agent_token");
+    const res = await fetch(
+      `https://api.texef.com/api/messages?conversation_id=${chat.conversation_id}&limit=100`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const data = await res.json();
 
-      const seen = new Set();
+    // ✅ Normalize + dedupe history
+    const seen = new Set();  // 👈 ഇവിടെ define cheyyണം
 
-      const normalized = Array.isArray(data)
-        ? data
-            .map((m) => {
-              const id =
-                m.id ||
-                m.message_id ||
-                m.msg_id ||
-                `msg_${m.created_at || m.timestamp || m.text}`;
+    const normalized = Array.isArray(data)
+      ? data
+          .map((m) => {
+            const id =
+              m.id ||
+              m.message_id ||
+              m.msg_id ||
+              `msg_${m.created_at || m.timestamp || m.text}`;
 
-              const senderRaw = m.sender || m.role || "user";
-              const sender = String(senderRaw);
-              const text = (m.text || m.message || m.reply || "").trim();
-              const ts =
-                m.timestamp ||
-                m.created_at ||
-                m.sent_at ||
-                new Date().toISOString();
+            const sender = m.sender || m.role || "user";
+            const text = (m.text || m.message || m.reply || "").trim();
+            const ts =
+              m.timestamp || m.created_at || m.sent_at || new Date().toISOString();
 
-              if (!text) return null;
+            if (!text) return null;
 
-              const key = `${id}|${sender}|${text}|${ts}`;
-              if (seen.has(key)) return null;
-              seen.add(key);
+            const key = `${id}|${sender}|${text}|${ts}`;
+            if (seen.has(key)) return null;
+            seen.add(key);
 
-              return {
-                id,
-                sender,
-                text,
-                timestamp: ts,
-              };
-            })
-            .filter(Boolean)
-        : [];
+            return {
+              id,
+              sender,
+              text,
+              timestamp: ts,
+            };
+          })
+          .filter(Boolean)
+      : [];
 
-      setMessages((prev) => ({
-        ...prev,
-        [chat.conversation_id]: normalized,
-      }));
-    } catch (err) {
-      console.error("⚠️ Fetch messages error:", err);
-    } finally {
-      setIsLoadingMessages(false);
-    }
-  };
+    setMessages((prev) => ({
+      ...prev,
+      [chat.conversation_id]: normalized,
+    }));
+  } catch (err) {
+    console.error("⚠️ Fetch messages error:", err);
+  } finally {
+    setIsLoadingMessages(false);
+  }
+};
+
+
+
 
   /* ---------- SEND ---------- */
+  // const handleSendMessage = (text) => {
+  //   if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) return;
+  //   if (!activeChat) return;
+
+  //   const msg = { conversation_id: activeChat.conversation_id, text };
+  //   consoleSocket.send(JSON.stringify(msg));
+
   const handleSendMessage = (text) => {
-    if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) return;
-    if (!activeChat) return;
+  if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) return;
+  if (!activeChat) return;
 
-    const msg = { conversation_id: activeChat.conversation_id, text };
-    consoleSocket.send(JSON.stringify(msg));
+  const msg = { conversation_id: activeChat.conversation_id, text };
+  consoleSocket.send(JSON.stringify(msg));
 
-    // No local push; backend WS 'message' event will echo and handleMessage will add it
-  };
+  // 🔥 ഇനി local-ൽ add cheyyേണ്ട: backend echo ചെയ്യുന്ന 'message' event-ിൽ handleMessage വഴി add ചെയ്യും
+};
+
+
+  //   handleMessage({
+  //     conversation_id: activeChat.conversation_id,
+  //     sender: "agent",
+  //     text,
+  //     timestamp: new Date().toISOString(),
+  //   });
+  // };
 
   /* ---------- CLOSE (WebSocket only) ---------- */
   const handleCloseChat = (conversationId) => {
     if (!conversationId) return;
 
     if (!consoleSocket || consoleSocket.readyState !== WebSocket.OPEN) {
-      console.warn(
-        "⚠️ Console socket not open, cannot send close_conversation"
-      );
+      console.warn("⚠️ Console socket not open, cannot send close_conversation");
+      // optional: still mark closed locally
       handleConversationClosed(conversationId);
       return;
     }
 
+    // 🔐 Send close_conversation over WS
     consoleSocket.send(
       JSON.stringify({
         type: "close_conversation",
@@ -6849,6 +6201,7 @@ const AgentConsole = () => {
       })
     );
 
+    // Optimistic UI update
     handleConversationClosed(conversationId);
   };
 
@@ -6895,6 +6248,15 @@ const AgentConsole = () => {
 };
 
 export default AgentConsole;
+
+
+
+
+
+
+
+
+
 
 
 
