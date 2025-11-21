@@ -5927,56 +5927,6 @@ const AgentConsole = () => {
 
 
 
-//   const handleMessage = (data) => {
-//   const convId = data.conversation_id || activeChat?.conversation_id;
-//   if (!convId) return;
-
-//   const msgId =
-//     data.id ||
-//     data.message_id ||
-//     data.msg_id ||
-//     null;
-
-//   const ts =
-//     data.timestamp ||
-//     data.created_at ||
-//     data.sent_at ||
-//     new Date().toISOString();
-
-//   const sender = data.sender;
-//   const text = (data.text || "").trim();
-//   if (!text) return;
-
-//   const newMsg = {
-//     id: msgId || `msg_${ts}_${sender}_${text}`,
-//     sender,
-//     text,
-//     timestamp: ts,
-//   };
-
-//   setMessages((prev) => {
-//     const current = prev[convId] || [];
-
-//     // 1️⃣ id ഉണ്ടെങ്കിൽ: same id already ഉണ്ടെങ്കിൽ skip
-//     if (msgId && current.some((m) => m.id === msgId)) {
-//       // console.log("🧹 skip WS duplicate by id", msgId);
-//       return prev;
-//     }
-
-//     // 2️⃣ id ഇല്ലെങ്കിൽ: composite key ഉപയോഗിച്ച് duplicate avoid
-//     const key = `${sender}|${text}|${ts}`;
-//     if (current.some((m) => `${m.sender}|${m.text}|${m.timestamp}` === key)) {
-//       // console.log("🧹 skip WS duplicate by key", key);
-//       return prev;
-//     }
-
-//     return {
-//       ...prev,
-//       [convId]: [...current, newMsg],
-//     };
-//   });
-// };
-
   const handleMessage = (data) => {
   const convId = data.conversation_id || activeChat?.conversation_id;
   if (!convId) return;
@@ -5993,37 +5943,8 @@ const AgentConsole = () => {
     data.sent_at ||
     new Date().toISOString();
 
-  // 🔁 Normalize sender → "agent" | "bot" | "system" | "user"
-  const rawSender =
-    data.sender ||
-    data.role ||
-    data.source ||
-    "user";
-
-  let sender = String(rawSender).toLowerCase();
-
-  if (
-    sender === "console_agent" ||
-    sender === "agent_console" ||
-    sender === "support_agent" ||
-    sender === "human_agent" ||
-    sender === "agent"
-  ) {
-    sender = "agent";
-  } else if (
-    sender === "bot" ||
-    sender === "ai" ||
-    sender === "assistant" ||
-    sender === "system_bot"
-  ) {
-    sender = "bot";
-  } else if (sender === "system") {
-    sender = "system";
-  } else {
-    sender = "user";
-  }
-
-  const text = (data.text || data.message || data.reply || "").trim();
+  const sender = data.sender;
+  const text = (data.text || "").trim();
   if (!text) return;
 
   const newMsg = {
@@ -6036,31 +5957,16 @@ const AgentConsole = () => {
   setMessages((prev) => {
     const current = prev[convId] || [];
 
-    // 1️⃣ same id already ഉണ്ടെങ്കിൽ → skip
+    // 1️⃣ id ഉണ്ടെങ്കിൽ: same id already ഉണ്ടെങ്കിൽ skip
     if (msgId && current.some((m) => m.id === msgId)) {
+      // console.log("🧹 skip WS duplicate by id", msgId);
       return prev;
     }
 
-    // 2️⃣ composite key (sender|text|timestamp) duplicate → skip
-    const compositeKey = `${sender}|${text}|${ts}`;
-    if (
-      current.some(
-        (m) => `${m.sender}|${m.text}|${m.timestamp}` === compositeKey
-      )
-    ) {
-      return prev;
-    }
-
-    // 3️⃣ 🧡 SPECIAL: system message with same text as last agent message → skip
-    //    ഇതാണ് green + orange "hello" duplicate avoid ചെയ്യുന്നത്.
-    const last = current[current.length - 1];
-    if (
-      sender === "system" &&
-      last &&
-      last.sender === "agent" &&
-      last.text === text
-    ) {
-      // console.log("🧹 Skipping system duplicate of agent message:", text);
+    // 2️⃣ id ഇല്ലെങ്കിൽ: composite key ഉപയോഗിച്ച് duplicate avoid
+    const key = `${sender}|${text}|${ts}`;
+    if (current.some((m) => `${m.sender}|${m.text}|${m.timestamp}` === key)) {
+      // console.log("🧹 skip WS duplicate by key", key);
       return prev;
     }
 
@@ -6070,6 +5976,8 @@ const AgentConsole = () => {
     };
   });
 };
+
+
 
 
 
