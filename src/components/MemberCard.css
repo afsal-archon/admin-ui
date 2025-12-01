@@ -1,0 +1,120 @@
+/* ===========================================================
+   💎 Elegant + Classic Member Card Design
+   Style: Glass, Modern, Subtle Shadow
+=========================================================== */
+
+.member-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+}
+
+.member-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(249, 115, 22, 0.15);
+}
+
+/* Left side */
+.member-info {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+/* Avatar */
+.avatar-wrapper {
+  position: relative;
+}
+.member-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #f1f1f1;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Status dot overlay */
+.status-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+.status-online {
+  background: #22c55e; /* Green */
+}
+.status-busy {
+  background: #facc15; /* Yellow */
+}
+.status-offline {
+  background: #9ca3af; /* Gray */
+}
+
+/* Text */
+.member-text h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 2px;
+}
+.member-text p {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Right side - Status pill */
+.status-badge {
+  text-align: right;
+}
+.status-pill {
+  padding: 0.3rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  transition: all 0.3s ease;
+}
+
+/* Status colors */
+.status-pill.status-online {
+  background: linear-gradient(90deg, #dcfce7, #bbf7d0);
+  color: #166534;
+}
+.status-pill.status-busy {
+  background: linear-gradient(90deg, #fef3c7, #fde68a);
+  color: #92400e;
+}
+.status-pill.status-offline {
+  background: linear-gradient(90deg, #f3f4f6, #e5e7eb);
+  color: #6b7280;
+}
+
+/* Hover animation */
+.status-pill:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .member-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .status-badge {
+    align-self: flex-end;
+  }
+}
