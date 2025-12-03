@@ -1,0 +1,149 @@
+/* ===========================================================
+   🎨 Figma-accurate Sidebar Design (Clean + Orange Accent)
+=========================================================== */
+
+.sidebar-container {
+  width: 220px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* top + bottom */
+  font-family: "Inter", sans-serif;
+  padding: 1.5rem 0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.03);
+}
+
+/* group for header + main menu */
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Header ---------- */
+.sidebar-header {
+  padding: 0 1.5rem 1.5rem;
+  border-bottom: 1px solid #f1f1f1;
+}
+.sidebar-header h2 {
+  color: #f97316; /* Orange brand color */
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* ---------- Menu ---------- */
+.sidebar-menu {
+  flex: 1;
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+.menu-item {
+  position: relative;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  color: #374151;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.menu-item:hover {
+  background: #f9fafb;
+}
+.menu-item.active {
+  color: #f97316;
+  background: #fff7ed;
+  font-weight: 600;
+}
+.menu-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: #f97316;
+  border-radius: 0 4px 4px 0;
+}
+
+/* Icon */
+.menu-icon {
+  font-size: 1.1rem;
+}
+
+/* ---------- Footer (Account + Logout bottom) ---------- */
+.sidebar-footer {
+  border-top: 1px solid #f3f4f6;
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+.footer-item {
+  text-align: left;
+  padding: 0.75rem 1.5rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.footer-item:hover {
+  color: #f97316;
+  background: #f9fafb;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .sidebar-container {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+  }
+
+  .sidebar-top {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .sidebar-header {
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .sidebar-menu {
+    flex-direction: row;
+    padding-top: 0;
+  }
+
+  .menu-item {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .menu-item.active::before {
+    display: none;
+  }
+
+  .sidebar-footer {
+    flex-direction: row;
+    border-top: none;
+    gap: 0.75rem;
+    padding-top: 0;
+  }
+
+  .footer-item {
+    padding: 0.5rem 0.75rem;
+  }
+}
